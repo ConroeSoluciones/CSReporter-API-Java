@@ -1,14 +1,15 @@
 /*
  * Copyright 2016 NueveBit, todos los derechos reservados.
  */
-package com.csfacturacion.descargasat.impl;
+package com.csfacturacion.csreporter.impl;
 
-import com.csfacturacion.descargasat.CFDI;
-import com.csfacturacion.descargasat.Consulta;
-import com.csfacturacion.descargasat.ConsultaInvalidaException;
-import com.csfacturacion.descargasat.Credenciales;
-import com.csfacturacion.descargasat.Parametros;
-import com.csfacturacion.descargasat.ProgresoConsultaListener;
+import com.csfacturacion.csreporter.impl.CSReporterHttpClient;
+import com.csfacturacion.csreporter.CFDI;
+import com.csfacturacion.csreporter.Consulta;
+import com.csfacturacion.csreporter.ConsultaInvalidaException;
+import com.csfacturacion.csreporter.Credenciales;
+import com.csfacturacion.csreporter.Parametros;
+import com.csfacturacion.csreporter.ProgresoConsultaListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -42,9 +43,9 @@ import org.junit.Ignore;
  *
  * @author emerino
  */
-public class DescargaSATIT {
+public class CSReporterIT {
 
-    private static DescargaSATHttpClient descargaSAT;
+    private static CSReporterHttpClient descargaSAT;
 
     private static Credenciales csCredenciales;
 
@@ -58,25 +59,25 @@ public class DescargaSATIT {
 
     private volatile boolean consultaTerminada;
 
-    public DescargaSATIT() {
+    public CSReporterIT() {
     }
 
     @BeforeClass
     public static void globalSetup() throws Exception {
         Gson gson = new GsonBuilder().create();
-        csCredenciales = gson.fromJson(IOUtils.toString(DescargaSATIT.class
+        csCredenciales = gson.fromJson(IOUtils.toString(CSReporterIT.class
                         .getResourceAsStream("/csCredenciales.json")),
                 Credenciales.class);
 
-        satCredenciales = gson.fromJson(IOUtils.toString(DescargaSATIT.class
+        satCredenciales = gson.fromJson(IOUtils.toString(CSReporterIT.class
                         .getResourceAsStream("/satCredenciales.json")),
                 Credenciales.class);
 
-        descargaSAT = new DescargaSATHttpClient(csCredenciales, 2000);
+        descargaSAT = new CSReporterHttpClient(csCredenciales, 2000);
 
         JsonParser jsonParser = new JsonParser();
         JsonObject config = jsonParser.parse(new InputStreamReader(
-                DescargaSATIT.class
+                CSReporterIT.class
                 .getResourceAsStream("/config.json"))).getAsJsonObject();
 
         consultaFolio = UUID.fromString(config.get("consultaFolio")
@@ -116,7 +117,7 @@ public class DescargaSATIT {
                         // todo lo que hay en este método se ejecuta en un 
                         // Thread distinto, cada vez que hay un cambio de estado
                         // en la consulta.
-                        DescargaSATIT.this.onStatusChanged(consulta);
+                        CSReporterIT.this.onStatusChanged(consulta);
                     }
                 });
 
@@ -167,7 +168,7 @@ public class DescargaSATIT {
                     @Override
                     public void onStatusChanged(Consulta c) {
                         System.out.println(c.getStatus());
-                        DescargaSATIT.this.onStatusChanged(c);
+                        CSReporterIT.this.onStatusChanged(c);
                     }
                 });
 
@@ -190,7 +191,7 @@ public class DescargaSATIT {
 
                     @Override
                     public void onStatusChanged(Consulta status) {
-                        DescargaSATIT.this.onStatusChanged(status);
+                        CSReporterIT.this.onStatusChanged(status);
                     }
                 });
 

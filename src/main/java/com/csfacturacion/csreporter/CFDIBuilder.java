@@ -1,13 +1,13 @@
 /*
  * Copyright 2016 NueveBit, todos los derechos reservados.
  */
-package com.csfacturacion.descargasat;
+package com.csfacturacion.csreporter;
 
-import com.csfacturacion.descargasat.CFDI;
-import com.csfacturacion.descargasat.CFDI.Status;
-import com.csfacturacion.descargasat.CFDI.Tipo;
-import com.csfacturacion.descargasat.RFC;
-import com.csfacturacion.descargasat.impl.ConsultaHttpClient;
+import com.csfacturacion.csreporter.CFDI;
+import com.csfacturacion.csreporter.CFDI.Status;
+import com.csfacturacion.csreporter.CFDI.Tipo;
+import com.csfacturacion.csreporter.RFC;
+import com.csfacturacion.csreporter.impl.ConsultaHttpClient;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;

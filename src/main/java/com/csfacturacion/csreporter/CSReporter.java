@@ -1,7 +1,7 @@
 /*
  * Copyright 2016 CSFacturación, todos los derechos reservados.
  */
-package com.csfacturacion.descargasat;
+package com.csfacturacion.csreporter;
 
 import java.util.UUID;
 
@@ -12,7 +12,7 @@ import java.util.UUID;
  *
  * @author emerino
  */
-public interface DescargaSAT {
+public interface CSReporter {
     
     /**
      * Realiza una consulta para obtener los CFDIs que correspondan de acuerdo

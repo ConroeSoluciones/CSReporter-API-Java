@@ -1,7 +1,7 @@
 /*
  * Copyright 2016 NueveBit, todos los derechos reservados.
  */
-package com.csfacturacion.descargasat.impl.http;
+package com.csfacturacion.csreporter.impl.http;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;

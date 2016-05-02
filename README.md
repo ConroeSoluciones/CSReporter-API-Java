@@ -1,7 +1,7 @@
-# DescargaSAT Java API
+# CSReporter Java API
 
 Provee una API sencilla para realizar consultas al portal del SAT a través
-de nuestro Web Service.
+de nuestro Web Service para CSReporter.
 
 Consta de 2 interfaces principales:
 
@@ -13,4 +13,4 @@ HTTP a la API REST del WS, presentando una API sencilla para clientes finales.
 
 Para ver ejemplos de uso, ver el archivo:
 
-    src/tests/java/com/csfacturacion/descargasat/impl/DescargaSATIT.java
+    src/tests/java/com/csfacturacion/csreporter/impl/CSReporterIT.java

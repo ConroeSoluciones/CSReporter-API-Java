@@ -1,16 +1,16 @@
 /*
  * Copyright 2016 NueveBit, todos los derechos reservados.
  */
-package com.csfacturacion.descargasat.impl;
+package com.csfacturacion.csreporter.impl;
 
-import com.csfacturacion.descargasat.impl.http.UserAgent;
-import com.csfacturacion.descargasat.CloseableDescargaSAT;
-import com.csfacturacion.descargasat.Consulta;
-import com.csfacturacion.descargasat.ConsultaInvalidaException;
-import com.csfacturacion.descargasat.Credenciales;
-import com.csfacturacion.descargasat.Parametros;
-import com.csfacturacion.descargasat.ProgresoConsultaListener;
-import com.csfacturacion.descargasat.impl.http.Response;
+import com.csfacturacion.csreporter.impl.http.UserAgent;
+import com.csfacturacion.csreporter.CloseableCSReporter;
+import com.csfacturacion.csreporter.Consulta;
+import com.csfacturacion.csreporter.ConsultaInvalidaException;
+import com.csfacturacion.csreporter.Credenciales;
+import com.csfacturacion.csreporter.Parametros;
+import com.csfacturacion.csreporter.ProgresoConsultaListener;
+import com.csfacturacion.csreporter.impl.http.Response;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.gson.Gson;
@@ -46,7 +46,7 @@ import org.joda.time.format.ISODateTimeFormat;
  *
  * @author emerino
  */
-public class DescargaSATHttpClient implements CloseableDescargaSAT {
+public class CSReporterHttpClient implements CloseableCSReporter {
 
     private static final String csHost = "www.csfacturacion.com";
 
@@ -73,7 +73,7 @@ public class DescargaSATHttpClient implements CloseableDescargaSAT {
         return dateFormatter;
     }
 
-    public DescargaSATHttpClient() {
+    public CSReporterHttpClient() {
         statusChecker = new StatusChecker();
         CloseableHttpClient httpClient = HttpClients.createDefault();
 
@@ -91,7 +91,7 @@ public class DescargaSATHttpClient implements CloseableDescargaSAT {
      * @param csCredenciales del contrato con CSFacturación
      * @param timeout para el statusChecker
      */
-    public DescargaSATHttpClient(Credenciales csCredenciales,
+    public CSReporterHttpClient(Credenciales csCredenciales,
             int timeout) {
 
         this();

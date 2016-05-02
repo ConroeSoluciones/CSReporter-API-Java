@@ -1,7 +1,7 @@
 /*
  * Copyright 2016 CSFacturación, todos los derechos reservados.
  */
-package com.csfacturacion.descargasat;
+package com.csfacturacion.csreporter;
 
 /**
  *

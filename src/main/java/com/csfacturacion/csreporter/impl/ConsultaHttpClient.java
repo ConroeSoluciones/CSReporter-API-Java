@@ -1,11 +1,11 @@
 /*
  * Copyright 2016 NueveBit, todos los derechos reservados.
  */
-package com.csfacturacion.descargasat.impl;
+package com.csfacturacion.csreporter.impl;
 
-import com.csfacturacion.descargasat.impl.http.UserAgent;
-import com.csfacturacion.descargasat.CFDI;
-import com.csfacturacion.descargasat.Consulta;
+import com.csfacturacion.csreporter.impl.http.UserAgent;
+import com.csfacturacion.csreporter.CFDI;
+import com.csfacturacion.csreporter.Consulta;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonObject;
 import java.net.URI;
