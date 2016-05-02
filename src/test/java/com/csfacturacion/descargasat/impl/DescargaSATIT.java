@@ -42,7 +42,7 @@ import org.junit.Ignore;
  *
  * @author emerino
  */
-public class DescargaSATHttpClientIT {
+public class DescargaSATIT {
 
     private static DescargaSATHttpClient descargaSAT;
 
@@ -58,19 +58,17 @@ public class DescargaSATHttpClientIT {
 
     private volatile boolean consultaTerminada;
 
-    public DescargaSATHttpClientIT() {
+    public DescargaSATIT() {
     }
 
     @BeforeClass
     public static void globalSetup() throws Exception {
         Gson gson = new GsonBuilder().create();
-        csCredenciales = gson.fromJson(
-                IOUtils.toString(DescargaSATHttpClientIT.class
+        csCredenciales = gson.fromJson(IOUtils.toString(DescargaSATIT.class
                         .getResourceAsStream("/csCredenciales.json")),
                 Credenciales.class);
 
-        satCredenciales = gson.fromJson(
-                IOUtils.toString(DescargaSATHttpClientIT.class
+        satCredenciales = gson.fromJson(IOUtils.toString(DescargaSATIT.class
                         .getResourceAsStream("/satCredenciales.json")),
                 Credenciales.class);
 
@@ -78,7 +76,7 @@ public class DescargaSATHttpClientIT {
 
         JsonParser jsonParser = new JsonParser();
         JsonObject config = jsonParser.parse(new InputStreamReader(
-                DescargaSATHttpClientIT.class
+                DescargaSATIT.class
                 .getResourceAsStream("/config.json"))).getAsJsonObject();
 
         consultaFolio = UUID.fromString(config.get("consultaFolio")
@@ -98,8 +96,7 @@ public class DescargaSATHttpClientIT {
         // este método termina al obtener el UUID de la consulta realizada,
         // recibe el listener (callback) como parámetro, el cuál será ejecutado
         // cada vez que cambie el status de la consulta
-        Consulta consulta = descargaSAT.consultar(
-                satCredenciales,
+        Consulta consulta = descargaSAT.consultar(satCredenciales,
                 new Parametros()
                 .tipo(Parametros.Tipo.EMITIDAS)
                 .status(Parametros.Status.TODOS)
@@ -119,7 +116,7 @@ public class DescargaSATHttpClientIT {
                         // todo lo que hay en este método se ejecuta en un 
                         // Thread distinto, cada vez que hay un cambio de estado
                         // en la consulta.
-                        DescargaSATHttpClientIT.this.onStatusChanged(consulta);
+                        DescargaSATIT.this.onStatusChanged(consulta);
                     }
                 });
 
@@ -170,7 +167,7 @@ public class DescargaSATHttpClientIT {
                     @Override
                     public void onStatusChanged(Consulta c) {
                         System.out.println(c.getStatus());
-                        DescargaSATHttpClientIT.this.onStatusChanged(c);
+                        DescargaSATIT.this.onStatusChanged(c);
                     }
                 });
 
@@ -188,13 +185,12 @@ public class DescargaSATHttpClientIT {
     @Test
     @Ignore
     public void repetirConsultaAnterior() throws Exception {
-        Consulta consulta = descargaSAT.repetir(
-                consultaFolio,
+        Consulta consulta = descargaSAT.repetir(consultaFolio,
                 new ProgresoConsultaListener() {
 
                     @Override
                     public void onStatusChanged(Consulta status) {
-                        DescargaSATHttpClientIT.this.onStatusChanged(status);
+                        DescargaSATIT.this.onStatusChanged(status);
                     }
                 });
 
