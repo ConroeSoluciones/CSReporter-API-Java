@@ -5,7 +5,7 @@ de nuestro Web Service para CSReporter.
 
 Consta de 2 interfaces principales:
 
-    com.csfacturacion.DescargaSAT
+    com.csfacturacion.CSReporter
     com.csfacturacion.Consulta
 
 Las implementaciones de ambas interfaces se encargan de realizar las peticiones
