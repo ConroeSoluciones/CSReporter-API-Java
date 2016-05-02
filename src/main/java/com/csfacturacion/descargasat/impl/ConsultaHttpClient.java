@@ -28,6 +28,14 @@ public class ConsultaHttpClient implements Consulta {
     private final UserAgent userAgent;
     private final UUID folio;
 
+    private int paginas;
+
+    private long totalResultados;
+
+    private boolean initResultados;
+
+    private boolean initPaginas;
+
     ConsultaHttpClient(UUID folio, UserAgent userAgent) {
         this.folio = folio;
         this.userAgent = userAgent;
@@ -92,24 +100,34 @@ public class ConsultaHttpClient implements Consulta {
     public long getTotalResultados() {
         validarTerminada();
 
-        HttpGet resumenRequest = new HttpGet(getResumenURI());
-        JsonObject resumen = userAgent.open(resumenRequest)
-                .getAsJson()
-                .getAsJsonObject();
+        if (!initResultados) {
+            HttpGet resumenRequest = new HttpGet(getResumenURI());
+            JsonObject resumen = userAgent.open(resumenRequest)
+                    .getAsJson()
+                    .getAsJsonObject();
 
-        return Long.valueOf(resumen.get("total").toString());
+            totalResultados = Long.valueOf(resumen.get("total").toString());
+            initResultados = true;
+        }
+
+        return totalResultados;
     }
 
     @Override
     public int getPaginas() {
         validarTerminada();
 
-        HttpGet resumenRequest = new HttpGet(getResumenURI());
-        JsonObject resumen = userAgent.open(resumenRequest)
-                .getAsJson()
-                .getAsJsonObject();
+        if (!initPaginas) {
+            HttpGet resumenRequest = new HttpGet(getResumenURI());
+            JsonObject resumen = userAgent.open(resumenRequest)
+                    .getAsJson()
+                    .getAsJsonObject();
 
-        return Integer.valueOf(resumen.get("paginas").toString());
+            paginas = Integer.valueOf(resumen.get("paginas").toString());
+            initPaginas = true;
+        }
+
+        return paginas;
     }
 
     private URI getResumenURI() {
