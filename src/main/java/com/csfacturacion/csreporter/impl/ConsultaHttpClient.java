@@ -77,13 +77,18 @@ public class ConsultaHttpClient implements Consulta {
 
     @Override
     public boolean isTerminada() {
-        return getStatus().toString().startsWith("COMPLETADO")
-                || isFallo();
+        Status status = getStatus();
+        return status.toString().startsWith("COMPLETADO")
+                || isFallo(status);
     }
 
     @Override
     public boolean isFallo() {
-        return getStatus().toString().startsWith("FALLO");
+        return isFallo(getStatus());
+    }
+
+    private boolean isFallo(Status status) {
+        return status.toString().startsWith("FALLO");
     }
 
     @Override
