@@ -21,7 +21,7 @@ import org.apache.http.client.utils.URIBuilder;
  *
  * @author emerino
  */
-public class ConsultaHttpClient implements Consulta {
+public class ConsultaImpl implements Consulta {
 
     private static final String csHost = "www.csfacturacion.com";
 
@@ -36,7 +36,7 @@ public class ConsultaHttpClient implements Consulta {
 
     private boolean initPaginas;
 
-    ConsultaHttpClient(UUID folio, UserAgent userAgent) {
+    ConsultaImpl(UUID folio, UserAgent userAgent) {
         this.folio = folio;
         this.userAgent = userAgent;
     }

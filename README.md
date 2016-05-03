@@ -17,7 +17,7 @@ Algunos ejemplos de uso:
     Credenciales csCredenciales = new Credenciales("XXXXXXXXXXXXX", "pass"));
 
     // inicializar un CSReporter
-    CSReporter csReporter = new CSReporterHttpClient(csCredenciales);
+    CSReporter csReporter = new CSReporterImpl(csCredenciales);
             
     // credenciales para el portal del SAT
     Credenciales satCredenciales = new Credenciales("XXXXXXXXXXXXX", "pass"));
@@ -25,7 +25,7 @@ Algunos ejemplos de uso:
     // obtener todos los CFDIs emitidos en el periodo de 2014-01-01 a las 
     // 00:00:00 horas hasta 2015-12-31 a las 23:59:59
     Consulta consulta = csReporter.consultar(satCredenciales,
-            new Parametros()
+            new ParametrosBuilder()
             .tipo(Parametros.Tipo.EMITIDAS)
             .status(Parametros.Status.TODOS)
             .fechaInicio(new DateTime()
@@ -34,12 +34,12 @@ Algunos ejemplos de uso:
                     .toDate())
             .fechaFin(new DateTime()
                     .withDate(2015, 12, 31)
-                    .withTimeAtStartOfDay()
                     .withTime(23, 59, 59, 0)
-                    .toDate()),
+                    .toDate())
+            .build(),
             new ProgresoConsultaListener() {
 
-                @Override
+             1   @Override
                 public void onStatusChanged(Consulta consulta) {
                     // verificar status y hacer algo con los resultados
                     if (consulta.isTerminada()) {
@@ -51,6 +51,6 @@ Algunos ejemplos de uso:
                 }
             });
 
-Para más ejemplos de uso, ver el archivo:
+Para más ejemplos, ver el archivo:
 
     src/tests/java/com/csfacturacion/csreporter/impl/CSReporterIT.java

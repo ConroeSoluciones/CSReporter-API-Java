@@ -6,25 +6,27 @@ package com.csfacturacion.csreporter;
 import java.util.Date;
 
 /**
- * Clase que define los parámetros de búsqueda disponibles en el WS, a través
- * de una API fluida.
+ * Clase que define los parámetros de búsqueda disponibles en el WS.
  *
  * @author emerino
  */
 public class Parametros {
-    
+
     public enum Status {
+
         VIGENTE,
         CANCELADO,
         TODOS
     }
 
     public enum Tipo {
+
         EMITIDAS,
         RECIBIDAS
     }
 
     public enum Servicio {
+
         CSREPORTER(8),
         CSDESCARGASAT(11);
 
@@ -40,54 +42,29 @@ public class Parametros {
 
     }
 
-    private RFC rfcBusqueda;
+    private final RFC rfcBusqueda;
 
-    private Date fechaInicio;
+    private final Date fechaInicio;
 
-    private Date fechaFin = new Date();
+    private final Date fechaFin;
 
-    private Status status;
+    private final Status status;
 
-    private Tipo tipo;
+    private final Tipo tipo;
 
-    private Servicio servicio = Servicio.CSREPORTER;
+    private final Servicio servicio;
 
-    public Parametros servicio(Servicio servicio) {
-        this.servicio = servicio;
-        return this;
-    }
-
-    public Parametros rfcBusqueda(RFC emisor) {
-        this.rfcBusqueda = emisor;
-        return this;
-    }
-
-    public Parametros fechaInicio(Date fechaInicio) {
-        this.fechaInicio = fechaInicio;
-        return this;
-    }
-
-    public Parametros fechaFin(Date fechaFin) {
-        this.fechaFin = fechaFin;
-        return this;
-    }
-
-    public Parametros status(Status status) {
-        this.status = status;
-        return this;
-    }
-
-    public Parametros tipo(Tipo tipo) {
-        this.tipo = tipo;
-        return this;
+    Parametros(ParametrosBuilder builder) {
+        this.rfcBusqueda = builder.getRfcBusqueda();
+        this.fechaInicio = builder.getFechaInicio();
+        this.fechaFin = builder.getFechaFin();
+        this.status = builder.getStatus();
+        this.tipo = builder.getTipo();
+        this.servicio = builder.getServicio();
     }
 
     public RFC getRfcBusqueda() {
         return rfcBusqueda;
-    }
-
-    public void setRfcBusqueda(RFC rfcBusqueda) {
-        this.rfcBusqueda = rfcBusqueda;
     }
 
     public Date getFechaInicio() {
@@ -109,5 +86,5 @@ public class Parametros {
     public Servicio getServicio() {
         return servicio;
     }
-    
+
 }

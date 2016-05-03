@@ -3,12 +3,12 @@
  */
 package com.csfacturacion.csreporter.impl;
 
-import com.csfacturacion.csreporter.impl.CSReporterHttpClient;
 import com.csfacturacion.csreporter.CFDI;
 import com.csfacturacion.csreporter.Consulta;
 import com.csfacturacion.csreporter.ConsultaInvalidaException;
 import com.csfacturacion.csreporter.Credenciales;
 import com.csfacturacion.csreporter.Parametros;
+import com.csfacturacion.csreporter.ParametrosBuilder;
 import com.csfacturacion.csreporter.ProgresoConsultaListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -45,7 +45,7 @@ import org.junit.Ignore;
  */
 public class CSReporterIT {
 
-    private static CSReporterHttpClient descargaSAT;
+    private static CSReporterImpl descargaSAT;
 
     private static Credenciales csCredenciales;
 
@@ -57,6 +57,8 @@ public class CSReporterIT {
 
     private static String cfdiXml;
 
+    private static Parametros parametros;
+
     private volatile boolean consultaTerminada;
 
     public CSReporterIT() {
@@ -66,14 +68,14 @@ public class CSReporterIT {
     public static void globalSetup() throws Exception {
         Gson gson = new GsonBuilder().create();
         csCredenciales = gson.fromJson(IOUtils.toString(CSReporterIT.class
-                        .getResourceAsStream("/csCredenciales.json")),
+                .getResourceAsStream("/csCredenciales.json")),
                 Credenciales.class);
 
         satCredenciales = gson.fromJson(IOUtils.toString(CSReporterIT.class
-                        .getResourceAsStream("/satCredenciales.json")),
+                .getResourceAsStream("/satCredenciales.json")),
                 Credenciales.class);
 
-        descargaSAT = new CSReporterHttpClient(csCredenciales, 2000);
+        descargaSAT = new CSReporterImpl(csCredenciales, 2000);
 
         JsonParser jsonParser = new JsonParser();
         JsonObject config = jsonParser.parse(new InputStreamReader(
@@ -85,6 +87,19 @@ public class CSReporterIT {
 
         cfdiFolio = UUID.fromString(config.get("cfdiFolio").getAsString());
         cfdiXml = config.get("cfdiXml").getAsString().trim();
+
+        parametros = new ParametrosBuilder()
+                .tipo(Parametros.Tipo.EMITIDAS)
+                .status(Parametros.Status.TODOS)
+                .fechaInicio(new DateTime()
+                        .withDate(2015, 1, 1)
+                        .withTimeAtStartOfDay()
+                        .toDate())
+                .fechaFin(new DateTime()
+                        .withDate(2015, 1, 10)
+                        .withTime(23, 59, 59, 0)
+                        .toDate())
+                .build();
     }
 
     public void setup() {
@@ -98,18 +113,7 @@ public class CSReporterIT {
         // recibe el listener (callback) como parámetro, el cuál será ejecutado
         // cada vez que cambie el status de la consulta
         Consulta consulta = descargaSAT.consultar(satCredenciales,
-                new Parametros()
-                .tipo(Parametros.Tipo.EMITIDAS)
-                .status(Parametros.Status.TODOS)
-                .fechaInicio(new DateTime()
-                        .withDate(2015, 1, 1)
-                        .withTimeAtStartOfDay()
-                        .toDate())
-                .fechaFin(new DateTime()
-                        .withDate(2015, 1, 10)
-                        .withTimeAtStartOfDay()
-                        .withTime(23, 59, 59, 0)
-                        .toDate()),
+                parametros,
                 new ProgresoConsultaListener() {
 
                     @Override
@@ -130,20 +134,7 @@ public class CSReporterIT {
         // este método devuelve la consutla de inmediato, como no toma
         // el listener (callback) como parámetro, esta funcionalidad queda
         // a cargo del código cliente
-        Consulta consulta = descargaSAT.consultar(
-                satCredenciales,
-                new Parametros()
-                .tipo(Parametros.Tipo.EMITIDAS)
-                .status(Parametros.Status.TODOS)
-                .fechaInicio(new DateTime()
-                        .withDate(2015, 1, 1)
-                        .withTimeAtStartOfDay()
-                        .toDate())
-                .fechaFin(new DateTime()
-                        .withDate(2015, 1, 10)
-                        .withTimeAtStartOfDay()
-                        .withTime(23, 59, 59, 0)
-                        .toDate()));
+        Consulta consulta = descargaSAT.consultar(satCredenciales, parametros);
 
         while (!consulta.isTerminada()) {
             System.out.println(consulta.getStatus());

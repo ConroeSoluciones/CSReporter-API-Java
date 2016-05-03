@@ -7,7 +7,7 @@ import com.csfacturacion.csreporter.CFDI;
 import com.csfacturacion.csreporter.CFDI.Status;
 import com.csfacturacion.csreporter.CFDI.Tipo;
 import com.csfacturacion.csreporter.RFC;
-import com.csfacturacion.csreporter.impl.ConsultaHttpClient;
+import com.csfacturacion.csreporter.impl.ConsultaImpl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
@@ -36,9 +36,9 @@ public class CFDIBuilder {
 
     private Status status;
 
-    private final ConsultaHttpClient consulta;
+    private final ConsultaImpl consulta;
 
-    public CFDIBuilder(ConsultaHttpClient consulta) {
+    public CFDIBuilder(ConsultaImpl consulta) {
         this.consulta = consulta;
     }
 
@@ -127,7 +127,7 @@ public class CFDIBuilder {
         return status;
     }
 
-    public ConsultaHttpClient getConsulta() {
+    public ConsultaImpl getConsulta() {
         return consulta;
     }
 

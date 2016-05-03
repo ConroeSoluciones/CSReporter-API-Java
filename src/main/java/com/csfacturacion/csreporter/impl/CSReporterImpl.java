@@ -46,7 +46,7 @@ import org.joda.time.format.ISODateTimeFormat;
  *
  * @author emerino
  */
-public class CSReporterHttpClient implements CloseableCSReporter {
+public class CSReporterImpl implements CloseableCSReporter {
 
     private static final String csHost = "www.csfacturacion.com";
 
@@ -73,7 +73,7 @@ public class CSReporterHttpClient implements CloseableCSReporter {
         return dateFormatter;
     }
 
-    public CSReporterHttpClient() {
+    public CSReporterImpl() {
         statusChecker = new StatusChecker();
         CloseableHttpClient httpClient = HttpClients.createDefault();
 
@@ -91,7 +91,7 @@ public class CSReporterHttpClient implements CloseableCSReporter {
      * @param csCredenciales del contrato con CSFacturación
      * @param timeout para el statusChecker
      */
-    public CSReporterHttpClient(Credenciales csCredenciales,
+    public CSReporterImpl(Credenciales csCredenciales,
             int timeout) {
 
         this();
@@ -196,7 +196,7 @@ public class CSReporterHttpClient implements CloseableCSReporter {
             ProgresoConsultaListener listener)
             throws ConsultaInvalidaException {
 
-        Consulta consulta = new ConsultaHttpClient(folio, userAgent);
+        Consulta consulta = new ConsultaImpl(folio, userAgent);
         if (listener != null) {
             statusChecker.addConsulta(consulta, listener);
         }
@@ -207,7 +207,7 @@ public class CSReporterHttpClient implements CloseableCSReporter {
     public Consulta buscar(UUID folio) throws ConsultaInvalidaException {
         validarExistente(folio);
 
-        return new ConsultaHttpClient(folio, userAgent);
+        return new ConsultaImpl(folio, userAgent);
     }
 
     @Override
@@ -234,7 +234,7 @@ public class CSReporterHttpClient implements CloseableCSReporter {
     private void validarExistente(UUID folio) throws ConsultaInvalidaException {
         validarCredenciales();
         HttpPost statusPost = new HttpPost(
-                ConsultaHttpClient.getProgresoURI(folio));
+                ConsultaImpl.getProgresoURI(folio));
 
         Response response = userAgent.open(statusPost);
 
