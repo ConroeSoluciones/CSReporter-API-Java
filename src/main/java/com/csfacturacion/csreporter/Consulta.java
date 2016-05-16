@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Representa una consulta realizada al portal CFDI del SAT.
+ * Representa una consulta realizada al portal CFDIMeta del SAT.
  *
  * @author emerino
  */
@@ -112,32 +112,32 @@ public interface Consulta {
      * @return El total de registros encontrados en la página dada o un arreglo
      * vacío si no hay suficientes resultados.
      */
-    List<CFDI> getResultados(int pagina);
+    List<CFDIMeta> getResultados(int pagina);
 
     /**
-     * Un CFDI se puede buscar directamente por folio si es un resultado de esta
-     * consulta. 
+     * Un CFDIMeta se puede buscar directamente por folio si es un resultado de esta
+ consulta. 
      *
-     * @param folio del CFDI
-     * @return el CFDI correspondiente o null si no se encontró en esta
-     * consulta.
+     * @param folio del CFDIMeta
+     * @return el CFDIMeta correspondiente o null si no se encontró en esta
+ consulta.
      */
-    CFDI getCFDI(UUID folio);
+    CFDIMeta getCFDI(UUID folio);
 
     /**
-     * Devuelve el XML del CFDI asociado con el folio dado. En ocasiones puede
+     * Devuelve el XML del CFDIMeta asociado con el folio dado. En ocasiones puede
      * no haber un XML asociado, en estos casos devuelve null.
-     * @param folio del CFDI.
-     * @return el XML asociado con el CFDI o null si no hay ninguno.
+     * @param folio del CFDIMeta.
+     * @return el XML asociado con el CFDIMeta o null si no hay ninguno.
      */
     String getCFDIXML(UUID folio);
 
     /**
-     * Devuelve el XML del CFDI dado. En ocasiones puede no haber un XML 
+     * Devuelve el XML del CFDIMeta dado. En ocasiones puede no haber un XML 
      * asociado, en estos casos devuelve null. 
      * 
-     * @param cfdi del CFDI.
-     * @return el XML asociado con el CFDI o null si no hay ninguno.
+     * @param cfdi del CFDIMeta.
+     * @return el XML asociado con el CFDIMeta o null si no hay ninguno.
      */
-    String getCFDIXML(CFDI cfdi);
+    String getCFDIXML(CFDIMeta cfdi);
 }

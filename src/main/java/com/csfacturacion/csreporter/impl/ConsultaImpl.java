@@ -4,7 +4,7 @@
 package com.csfacturacion.csreporter.impl;
 
 import com.csfacturacion.csreporter.impl.http.UserAgent;
-import com.csfacturacion.csreporter.CFDI;
+import com.csfacturacion.csreporter.CFDIMeta;
 import com.csfacturacion.csreporter.Consulta;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonObject;
@@ -144,13 +144,13 @@ public class ConsultaImpl implements Consulta {
     }
 
     @Override
-    public List<CFDI> getResultados(int pagina) {
+    public List<CFDIMeta> getResultados(int pagina) {
         validarTerminada();
 
         HttpGet resultadosRequest = new HttpGet(getResultadosURI(pagina));
 
-        List<CFDI> resultados = userAgent.open(resultadosRequest)
-                .getAs(new TypeToken<List<CFDI>>() {
+        List<CFDIMeta> resultados = userAgent.open(resultadosRequest)
+                .getAs(new TypeToken<List<CFDIMeta>>() {
                 });
 
         return resultados;
@@ -172,12 +172,12 @@ public class ConsultaImpl implements Consulta {
     }
 
     @Override
-    public CFDI getCFDI(UUID folio) {
+    public CFDIMeta getCFDI(UUID folio) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public String getCFDIXML(CFDI cfdi) {
+    public String getCFDIXML(CFDIMeta cfdi) {
         return getCFDIXML(cfdi.getFolio());
     }
 

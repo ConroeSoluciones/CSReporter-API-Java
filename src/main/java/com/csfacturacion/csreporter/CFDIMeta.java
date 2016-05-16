@@ -10,15 +10,17 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * Una representación de un CFDI. Gestiona la información principal de un CFDI.
+ * Una representación de los metadatos de un CFDI. Estos datos son los que
+ * se encuentran disponibles en el portal del SAT, el contenido del CFDI
+ * se encuentra como cadena en formato XML.
  * NOTE: El ID de esta entidad es el folio del CFDI real.
  *
  * @author emerino
  */
-public class CFDI implements Comparable<CFDI>{
+public class CFDIMeta implements Comparable<CFDIMeta>{
 
     /**
-     * Tipo marcado en el CFDI.
+     * Tipo marcado en el CFDIMeta.
      */
     public enum Tipo {
 
@@ -28,7 +30,7 @@ public class CFDI implements Comparable<CFDI>{
     }
 
     /**
-     * Status del CFDI, de acuerdo a los valores reportados por el SAT.
+     * Status del CFDIMeta, de acuerdo a los valores reportados por el SAT.
      */
     public enum Status {
 
@@ -55,9 +57,7 @@ public class CFDI implements Comparable<CFDI>{
 
     private final Status status;
 
-    private String xml;
-
-    CFDI(CFDIBuilder builder) {
+    CFDIMeta(CFDIMetaBuilder builder) {
         this.folio = builder.getFolio();
         this.emisor = builder.getEmisor();
         this.receptor = builder.getReceptor();
@@ -121,7 +121,7 @@ public class CFDI implements Comparable<CFDI>{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final CFDI other = (CFDI) obj;
+        final CFDIMeta other = (CFDIMeta) obj;
         if ((this.folio == null) ? (other.folio != null) : !this.folio.equals(other.folio)) {
             return false;
         }
@@ -129,7 +129,7 @@ public class CFDI implements Comparable<CFDI>{
     }
 
     @Override
-    public int compareTo(CFDI o) {
+    public int compareTo(CFDIMeta o) {
         int comp = getFechaEmision().compareTo(o.getFechaEmision());
         if (comp == 0) {
             comp = getFolio().compareTo(o.getFolio());

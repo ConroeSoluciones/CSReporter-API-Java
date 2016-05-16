@@ -3,7 +3,7 @@
  */
 package com.csfacturacion.csreporter.impl;
 
-import com.csfacturacion.csreporter.CFDI;
+import com.csfacturacion.csreporter.CFDIMeta;
 import com.csfacturacion.csreporter.Consulta;
 import com.csfacturacion.csreporter.ConsultaInvalidaException;
 import com.csfacturacion.csreporter.Credenciales;
@@ -209,10 +209,10 @@ public class CSReporterIT {
                             // cada lista contiene hasta 20 cfdis, estos NO
                             // se almacenan en memoria, son descartados tan 
                             // pronto como deje de usarse la lista devuelta
-                            List<CFDI> resultados = c.getResultados(i);
+                            List<CFDIMeta> resultados = c.getResultados(i);
 
-                            for (CFDI cfdi : resultados) {
-                                // trabajar con el CFDI
+                            for (CFDIMeta cfdi : resultados) {
+                                // trabajar con el CFDIMeta
                                 assertTrue(cfdi.getFolio() != null);
                             }
                         }

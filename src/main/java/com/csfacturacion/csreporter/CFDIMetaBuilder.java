@@ -3,9 +3,9 @@
  */
 package com.csfacturacion.csreporter;
 
-import com.csfacturacion.csreporter.CFDI;
-import com.csfacturacion.csreporter.CFDI.Status;
-import com.csfacturacion.csreporter.CFDI.Tipo;
+import com.csfacturacion.csreporter.CFDIMeta;
+import com.csfacturacion.csreporter.CFDIMeta.Status;
+import com.csfacturacion.csreporter.CFDIMeta.Tipo;
 import com.csfacturacion.csreporter.RFC;
 import com.csfacturacion.csreporter.impl.ConsultaImpl;
 import java.math.BigDecimal;
@@ -16,7 +16,7 @@ import java.util.UUID;
  *
  * @author emerino
  */
-public class CFDIBuilder {
+public class CFDIMetaBuilder {
 
     private UUID folio;
 
@@ -38,55 +38,55 @@ public class CFDIBuilder {
 
     private final ConsultaImpl consulta;
 
-    public CFDIBuilder(ConsultaImpl consulta) {
+    public CFDIMetaBuilder(ConsultaImpl consulta) {
         this.consulta = consulta;
     }
 
-    public CFDIBuilder folio(String folio) {
+    public CFDIMetaBuilder folio(String folio) {
         return folio(UUID.fromString(folio.trim()));
     }
 
-    public CFDIBuilder folio(UUID folio) {
+    public CFDIMetaBuilder folio(UUID folio) {
         this.folio = folio;
         return this;
     }
 
-    public CFDIBuilder emisor(RFC emisor) {
+    public CFDIMetaBuilder emisor(RFC emisor) {
         this.emisor = emisor;
         return this;
     }
 
-    public CFDIBuilder receptor(RFC receptor) {
+    public CFDIMetaBuilder receptor(RFC receptor) {
         this.receptor = receptor;
         return this;
     }
 
-    public CFDIBuilder fechaEmision(Date fechaEmision) {
+    public CFDIMetaBuilder fechaEmision(Date fechaEmision) {
         this.fechaEmision = fechaEmision;
         return this;
     }
 
-    public CFDIBuilder fechaCertificacion(Date fechaCertificacion) {
+    public CFDIMetaBuilder fechaCertificacion(Date fechaCertificacion) {
         this.fechaCertificacion = fechaCertificacion;
         return this;
     }
 
-    public CFDIBuilder PACCertificador(RFC certificador) {
+    public CFDIMetaBuilder PACCertificador(RFC certificador) {
         this.PACCertificador = certificador;
         return this;
     }
 
-    public CFDIBuilder total(BigDecimal total) {
+    public CFDIMetaBuilder total(BigDecimal total) {
         this.total = total;
         return this;
     }
 
-    public CFDIBuilder tipo(Tipo tipo) {
+    public CFDIMetaBuilder tipo(Tipo tipo) {
         this.tipo = tipo;
         return this;
     }
 
-    public CFDIBuilder status(Status status) {
+    public CFDIMetaBuilder status(Status status) {
         this.status = status;
         return this;
     }
@@ -131,10 +131,10 @@ public class CFDIBuilder {
         return consulta;
     }
 
-    public CFDI build() {
+    public CFDIMeta build() {
             // TODO: Validate
         // se debe devolver una copia, para evitar que se pueda modificar
-        // el CFDI a través del builder después de ser creado.
-        return new CFDI(this);
+        // el CFDIMeta a través del builder después de ser creado.
+        return new CFDIMeta(this);
     }
 }
