@@ -103,9 +103,9 @@ public class ConsultaImpl implements Consulta {
 
     @Override
     public long getTotalResultados() {
-        validarTerminada();
-
         if (!initResultados) {
+            validarTerminada();
+
             HttpGet resumenRequest = new HttpGet(getResumenURI());
             JsonObject resumen = userAgent.open(resumenRequest)
                     .getAsJson()
@@ -120,9 +120,9 @@ public class ConsultaImpl implements Consulta {
 
     @Override
     public int getPaginas() {
-        validarTerminada();
-
         if (!initPaginas) {
+            validarTerminada();
+            
             HttpGet resumenRequest = new HttpGet(getResumenURI());
             JsonObject resumen = userAgent.open(resumenRequest)
                     .getAsJson()
