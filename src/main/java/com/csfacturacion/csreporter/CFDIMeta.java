@@ -13,7 +13,6 @@ import java.util.UUID;
  * Una representación de los metadatos de un CFDI. Estos datos son los que
  * se encuentran disponibles en el portal del SAT, el contenido del CFDI
  * se encuentra como cadena en formato XML.
- * NOTE: El ID de esta entidad es el folio del CFDI real.
  *
  * @author emerino
  */

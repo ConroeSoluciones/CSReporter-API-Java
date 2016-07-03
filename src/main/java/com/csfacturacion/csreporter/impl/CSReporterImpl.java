@@ -10,15 +10,14 @@ import com.csfacturacion.csreporter.ConsultaInvalidaException;
 import com.csfacturacion.csreporter.Credenciales;
 import com.csfacturacion.csreporter.Parametros;
 import com.csfacturacion.csreporter.ProgresoConsultaListener;
+import com.csfacturacion.csreporter.impl.http.Request;
 import com.csfacturacion.csreporter.impl.http.Response;
+import com.csfacturacion.csreporter.impl.util.RequestFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Deque;
 import java.util.List;
 import java.util.UUID;
@@ -27,17 +26,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-import org.apache.http.Consts;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Implementación por defecto de DescargaSAT. Se utiliza un DescargaSAT por
@@ -48,8 +37,6 @@ import org.joda.time.format.ISODateTimeFormat;
  */
 public class CSReporterImpl implements CloseableCSReporter {
 
-    private static final String csHost = "www.csfacturacion.com";
-
     private Credenciales csCredenciales;
 
     private int statusCheckTimeout = 15000; // en milisegundos
@@ -58,30 +45,33 @@ public class CSReporterImpl implements CloseableCSReporter {
 
     private final UserAgent userAgent;
 
-    private static DateTimeFormatter dateFormatter;
-
     private final ScheduledExecutorService scheduler
             = Executors.newScheduledThreadPool(1);
 
     private ScheduledFuture<?> statusCheckerHandle;
 
-    private DateTimeFormatter getDateFormatter() {
-        if (dateFormatter == null) {
-            dateFormatter = ISODateTimeFormat.dateHourMinuteSecond();
-        }
-
-        return dateFormatter;
-    }
+    private RequestFactory requestFactory;
 
     public CSReporterImpl() {
-        statusChecker = new StatusChecker();
-        CloseableHttpClient httpClient = HttpClients.createDefault();
+        this(new RequestFactory());
+    }
 
-        Gson gson = new GsonBuilder()
+    public CSReporterImpl(UserAgent userAgent) {
+        this(null, userAgent);
+    }
+
+    public CSReporterImpl(RequestFactory requestFactory) {
+        this(requestFactory, new UserAgent(
+                HttpClients.createDefault(),
+                new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
-                .create();
+                .create()));
+    }
 
-        userAgent = new UserAgent(httpClient, gson);
+    public CSReporterImpl(RequestFactory requestFactory, UserAgent userAgent) {
+        this.requestFactory = requestFactory;
+        this.statusChecker = new StatusChecker();
+        this.userAgent = userAgent;
     }
 
     /**
@@ -104,7 +94,7 @@ public class CSReporterImpl implements CloseableCSReporter {
                 TimeUnit.MILLISECONDS);
     }
 
-    private void validarCredenciales() {
+    protected void validarCredenciales() {
         if (csCredenciales == null) {
             throw new IllegalStateException("No se han establecido las "
                     + "credenciales del contrato.");
@@ -127,76 +117,32 @@ public class CSReporterImpl implements CloseableCSReporter {
 
         validarCredenciales();
 
-        DateTimeFormatter df = getDateFormatter();
+        Request request = requestFactory.newConsultaRequest(
+                csCredenciales, credenciales, params);
 
-        try {
-            URIBuilder consultaUriBuilder = new URIBuilder()
-                    .setScheme("https")
-                    .setHost(csHost)
-                    .setPath("/webservices/csdescargasat")
-                    .setParameter("method", "ConsultaSat")
-                    .setParameter("cRfcContrato", csCredenciales.getUsuario())
-                    .setParameter("cRfc", credenciales.getUsuario())
-                    .setParameter("cPassword", credenciales.getPassword())
-                    .setParameter("cFchI",
-                            df.print(params.getFechaInicio().getTime()))
-                    .setParameter("cFchF",
-                            df.print(params.getFechaFin().getTime()))
-                    .setParameter("cConsulta",
-                            (params.getTipo() == Parametros.Tipo.EMITIDAS)
-                                    ? "emitidas"
-                                    : "recibidas")
-                    .setParameter("cRfcSearch",
-                            (params.getRfcBusqueda() != null)
-                                    ? params.getRfcBusqueda().toString()
-                                    : "todos")
-                    .setParameter("cServicio",
-                            String.valueOf(params.getServicio().getNumero()));
+        JsonObject consultaJson = userAgent.open(request)
+                .getAsJson()
+                .getAsJsonObject();
 
-            String status;
+        String folioRaw = consultaJson.get("UUID").getAsString();
+        if (folioRaw.isEmpty()) {
+            // TODO: Debería mandar al log la estructura JSON recibida,
+            // para arreglar el problema en caso que se presente.
+            String msg = (consultaJson.has("MENSAJE"))
+                    ? consultaJson.get("MENSAJE").getAsString()
+                    : "Ocurrió un error desconocido al realizar la consulta.";
 
-            switch (params.getStatus()) {
-                case VIGENTE:
-                    status = "vigentes";
-                    break;
-                case CANCELADO:
-                    status = "cancelados";
-                    break;
-                default:
-                    status = "todos";
-                    break;
-            }
-
-            consultaUriBuilder.setParameter("cEstatus", status);
-
-            HttpGet httpGet = new HttpGet(consultaUriBuilder.build());
-            JsonObject consultaJson = userAgent.open(httpGet)
-                    .getAsJson()
-                    .getAsJsonObject();
-
-            String folioRaw = consultaJson.get("UUID").getAsString();
-            if (folioRaw.isEmpty()) {
-                // TODO: Debería mandar al log la estructura JSON recibida,
-                // para arreglar el problema en caso que se presente.
-                String msg = (consultaJson.has("MENSAJE"))
-                        ? consultaJson.get("MENSAJE").getAsString()
-                        : "Ocurrió un error desconocido al realizar la consulta.";
-
-                throw new ConsultaInvalidaException(msg);
-            }
-
-            UUID folio = UUID.fromString(consultaJson.get("UUID").getAsString());
-            return consultarGenerico(folio, listener);
-        } catch (URISyntaxException e) {
-            throw new ConsultaInvalidaException(e);
+            throw new ConsultaInvalidaException(msg);
         }
+
+        return newConsulta(UUID.fromString(folioRaw), listener);
     }
 
-    private Consulta consultarGenerico(UUID folio,
+    protected Consulta newConsulta(UUID folio,
             ProgresoConsultaListener listener)
             throws ConsultaInvalidaException {
 
-        Consulta consulta = new ConsultaImpl(folio, userAgent);
+        Consulta consulta = new ConsultaImpl(folio, requestFactory, userAgent);
         if (listener != null) {
             statusChecker.addConsulta(consulta, listener);
         }
@@ -207,12 +153,16 @@ public class CSReporterImpl implements CloseableCSReporter {
     public Consulta buscar(UUID folio) throws ConsultaInvalidaException {
         validarExistente(folio);
 
-        return new ConsultaImpl(folio, userAgent);
+        return newConsulta(folio, null);
     }
 
     @Override
     public Consulta buscar(UUID folio, ProgresoConsultaListener listener)
             throws ConsultaInvalidaException {
+
+        if (listener == null) {
+            throw new IllegalArgumentException("listener == null");
+        }
 
         Consulta consulta = buscar(folio);
         if (consulta.isRepetir()) {
@@ -233,10 +183,9 @@ public class CSReporterImpl implements CloseableCSReporter {
 
     private void validarExistente(UUID folio) throws ConsultaInvalidaException {
         validarCredenciales();
-        HttpPost statusPost = new HttpPost(
-                ConsultaImpl.getProgresoURI(folio));
 
-        Response response = userAgent.open(statusPost);
+        Response response = userAgent.open(
+                requestFactory.newStatusRequest(folio));
 
         // verifica que la respuesta sea la esperada, de lo contrario
         // no existe una consulta asociada con el folio dado
@@ -245,19 +194,6 @@ public class CSReporterImpl implements CloseableCSReporter {
                     + " el UUID dado.");
         }
 
-    }
-
-    private URI getRepetirConsultaURI() {
-        try {
-            return new URIBuilder()
-                    .setScheme("https")
-                    .setHost(csHost)
-                    .setPath("/webservices/csdescargasat/repetir")
-                    .build();
-        } catch (URISyntaxException e) {
-            // log
-            throw new RuntimeException();
-        }
     }
 
     @Override
@@ -270,17 +206,9 @@ public class CSReporterImpl implements CloseableCSReporter {
             throws ConsultaInvalidaException {
 
         validarExistente(folio);
+        userAgent.open(requestFactory.newRepetirConsultaRequest(folio));
 
-        HttpPost repetirRequest = new HttpPost(getRepetirConsultaURI());
-        List<NameValuePair> formparams = Lists.newArrayList();
-        formparams.add(new BasicNameValuePair("idConsulta", folio.toString()));
-        UrlEncodedFormEntity entity
-                = new UrlEncodedFormEntity(formparams, Consts.UTF_8);
-        repetirRequest.setEntity(entity);
-
-        userAgent.open(repetirRequest);
-
-        return consultarGenerico(folio, listener);
+        return newConsulta(folio, listener);
     }
 
     /**
