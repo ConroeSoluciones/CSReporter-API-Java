@@ -11,13 +11,14 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpRequest;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
@@ -53,17 +54,17 @@ public class UserAgent {
         } else {
             HttpPost p = new HttpPost(request.getUri());
             if (request.getEntity() != null) {
-                List<NameValuePair> formparams = Lists.newArrayList();
-                for (Map.Entry<String, String> kv
-                        : request.getEntity().entrySet()) {
-
-                    formparams.add(new BasicNameValuePair(
-                            kv.getKey(), 
-                            kv.getValue()));
+                switch (request.getMediaType()) {
+                    case X_WWW_FORM_URLENCODED:
+                        handleFormEncoded(p, request.getEntity());
+                        break;
+                    case JSON:
+                        handleJson(p, request.getEntity());
+                        break;
+                    default:
+                        throw new IllegalStateException("method not handled");
                 }
-                UrlEncodedFormEntity entity
-                        = new UrlEncodedFormEntity(formparams, Consts.UTF_8);
-                p.setEntity(entity);
+
             }
             r = p;
         }
@@ -72,6 +73,27 @@ public class UserAgent {
         return new Response(gson,
                 rawResponse.getContent(),
                 rawResponse.getCode());
+    }
+
+    private void handleFormEncoded(HttpPost p, Map<String, String> entity) {
+        List<NameValuePair> formparams = Lists.newArrayList();
+        for (Map.Entry<String, String> kv
+                : entity.entrySet()) {
+
+            formparams.add(new BasicNameValuePair(
+                    kv.getKey(),
+                    kv.getValue()));
+        }
+        UrlEncodedFormEntity e
+                = new UrlEncodedFormEntity(formparams, Consts.UTF_8);
+        p.setEntity(e);
+    }
+
+    private void handleJson(HttpPost p, Map<String, String> entity) {
+        StringEntity e = new StringEntity(gson.toJson(entity),
+                ContentType.APPLICATION_JSON);
+
+        p.setEntity(e);
     }
 
     private RawResponse openRaw(HttpUriRequest request) {

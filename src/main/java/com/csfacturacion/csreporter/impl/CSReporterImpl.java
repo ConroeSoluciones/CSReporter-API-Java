@@ -37,6 +37,8 @@ import org.apache.http.impl.client.HttpClients;
  */
 public class CSReporterImpl implements CloseableCSReporter {
 
+    private static final int DEFAULT_TIMEOUT = 15; //seconds
+
     private Credenciales csCredenciales;
 
     private int statusCheckTimeout = 15000; // en milisegundos
@@ -53,25 +55,39 @@ public class CSReporterImpl implements CloseableCSReporter {
     private RequestFactory requestFactory;
 
     public CSReporterImpl() {
-        this(new RequestFactory());
+        this(new RequestFactory(), DEFAULT_TIMEOUT * 1000);
     }
 
     public CSReporterImpl(UserAgent userAgent) {
-        this(null, userAgent);
+        this(null, userAgent, DEFAULT_TIMEOUT * 1000);
     }
 
     public CSReporterImpl(RequestFactory requestFactory) {
+        this(requestFactory, DEFAULT_TIMEOUT * 1000);
+    }
+
+    public CSReporterImpl(RequestFactory requestFactory, int timeout) {
         this(requestFactory, new UserAgent(
                 HttpClients.createDefault(),
                 new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
-                .create()));
+                .create()),
+                timeout);
     }
 
-    public CSReporterImpl(RequestFactory requestFactory, UserAgent userAgent) {
+    public CSReporterImpl(RequestFactory requestFactory,
+            UserAgent userAgent,
+            int timeout) {
+
         this.requestFactory = requestFactory;
         this.statusChecker = new StatusChecker();
         this.userAgent = userAgent;
+
+        statusCheckerHandle = scheduler.scheduleAtFixedRate(
+                statusChecker,
+                timeout,
+                timeout,
+                TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -87,11 +103,6 @@ public class CSReporterImpl implements CloseableCSReporter {
         this();
         this.csCredenciales = csCredenciales;
 
-        statusCheckerHandle = scheduler.scheduleAtFixedRate(
-                statusChecker,
-                timeout,
-                timeout,
-                TimeUnit.MILLISECONDS);
     }
 
     protected void validarCredenciales() {
@@ -124,7 +135,8 @@ public class CSReporterImpl implements CloseableCSReporter {
                 .getAsJson()
                 .getAsJsonObject();
 
-        String folioRaw = consultaJson.get("UUID").getAsString();
+        String folioRaw = consultaJson.get(getJsonConsultaIdParamName())
+                .getAsString();
         if (folioRaw.isEmpty()) {
             // TODO: Debería mandar al log la estructura JSON recibida,
             // para arreglar el problema en caso que se presente.
@@ -136,6 +148,10 @@ public class CSReporterImpl implements CloseableCSReporter {
         }
 
         return newConsulta(UUID.fromString(folioRaw), listener);
+    }
+
+    protected String getJsonConsultaIdParamName() {
+        return "UUID";
     }
 
     protected Consulta newConsulta(UUID folio,

@@ -126,7 +126,7 @@ public class RequestFactory {
         }
     }
 
-    private URIBuilder newResultadosURIBuilder(UUID folio, String path) {
+    protected URIBuilder newResultadosURIBuilder(UUID folio, String path) {
         return newBaseURIBuilder("/resultados/" + folio + path);
     }
 
@@ -152,11 +152,8 @@ public class RequestFactory {
 
     public Request newDescargaRequest(UUID folio, UUID folioCFDI) {
         try {
-            return new Request(newBaseURIBuilder(
-                    "/descargas/"
-                    + folio
-                    + "/"
-                    + folioCFDI)
+            return new Request(
+                    newDescargaURIBuilder(folio, folioCFDI)
                     .build(),
                     Request.HttpMethod.GET);
         } catch (URISyntaxException e) {
@@ -165,7 +162,11 @@ public class RequestFactory {
         }
     }
 
-    private static DateTimeFormatter getDateFormatter() {
+    protected URIBuilder newDescargaURIBuilder(UUID folio, UUID folioCFDI) {
+        return newBaseURIBuilder("/descargas/" + folio + "/" + folioCFDI);
+    }
+
+    protected static DateTimeFormatter getDateFormatter() {
         if (dateFormatter == null) {
             dateFormatter = ISODateTimeFormat.dateHourMinuteSecond();
         }
