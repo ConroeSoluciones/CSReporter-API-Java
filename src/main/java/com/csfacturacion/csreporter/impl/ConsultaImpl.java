@@ -123,7 +123,7 @@ public class ConsultaImpl implements Consulta {
         
         validarTerminada();
 
-        if (getPaginas() <= 0) {
+        if (getPaginas() <= 0 || pagina > getPaginas()) {
             throw new ResultadosInsuficientesException("No existen suficientes "
                     + "resultados para mostrar, total páginas: " + getPaginas());
         }
