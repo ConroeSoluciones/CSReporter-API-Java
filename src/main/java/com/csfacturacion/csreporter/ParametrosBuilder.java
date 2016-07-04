@@ -16,7 +16,7 @@ import org.joda.time.DateTime;
  */
 public class ParametrosBuilder {
 
-    private EmpresaFiscal rfcBusqueda;
+    private String rfcBusqueda;
 
     private Date fechaInicio;
 
@@ -45,7 +45,7 @@ public class ParametrosBuilder {
      * @param rfc a buscar.
      * @return este builder, para encadenamiento.
      */
-    public ParametrosBuilder rfcBusqueda(EmpresaFiscal rfc) {
+    public ParametrosBuilder rfcBusqueda(String rfc) {
         this.rfcBusqueda = rfc;
         return this;
     }
@@ -110,28 +110,29 @@ public class ParametrosBuilder {
         return new Parametros(this);
     }
 
-    EmpresaFiscal getRfcBusqueda() {
+    public String getRfcBusqueda() {
         return rfcBusqueda;
     }
 
-    Date getFechaInicio() {
+    public Date getFechaInicio() {
         return fechaInicio;
     }
 
-    Date getFechaFin() {
+    public Date getFechaFin() {
         return fechaFin;
     }
 
-    Status getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    Tipo getTipo() {
+    public Tipo getTipo() {
         return tipo;
     }
 
-    Servicio getServicio() {
+    public Servicio getServicio() {
         return servicio;
     }
+
 
 }

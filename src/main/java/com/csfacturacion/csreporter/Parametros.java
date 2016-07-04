@@ -42,7 +42,7 @@ public class Parametros {
 
     }
 
-    private final EmpresaFiscal rfcBusqueda;
+    private final String rfcBusqueda;
 
     private final Date fechaInicio;
 
@@ -63,7 +63,7 @@ public class Parametros {
         this.servicio = builder.getServicio();
     }
 
-    public EmpresaFiscal getRfcBusqueda() {
+    public String getRfcBusqueda() {
         return rfcBusqueda;
     }
 
