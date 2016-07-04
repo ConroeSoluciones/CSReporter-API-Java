@@ -8,14 +8,27 @@ package com.csfacturacion.csreporter;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Una representación de los metadatos de un CFDI. Estos datos son los que
  * se encuentran disponibles en el portal del SAT, el contenido del CFDI
  * se encuentra como cadena en formato XML.
+ * 
+ * NOTE: La clase incluye anotaciones JPA, por lo que está lista para ser
+ * extendida y proveer el nombre de la tabla que tendrá en la db.
  *
  * @author emerino
  */
+@MappedSuperclass
 public class CFDIMeta implements Comparable<CFDIMeta>{
 
     /**
@@ -37,23 +50,46 @@ public class CFDIMeta implements Comparable<CFDIMeta>{
         VIGENTE
     }
 
-
+    @Column(length = 36, nullable = false, unique = true)
     private final UUID folio;
 
-    private final RFC emisor;
+    @AttributeOverrides({
+        @AttributeOverride(name = "rfc", column = @Column(name = "rfcEmisor")),
+        @AttributeOverride(name = "razonSocial",
+                column = @Column(name = "razonSocialEmisor"))
+    })
+    @Embedded
+    private final EmpresaFiscal emisor;
 
-    private final RFC receptor;
+    @AttributeOverrides({
+        @AttributeOverride(name = "rfc", column = @Column(name = "rfcReceptor")),
+        @AttributeOverride(name = "razonSocial",
+                column = @Column(name = "razonSocialReceptor"))
+    })
+    @Embedded
+    private final EmpresaFiscal receptor;
 
+    @Temporal(TemporalType.TIMESTAMP)
     private final Date fechaEmision;
 
+    @Temporal(TemporalType.TIMESTAMP)
     private final Date fechaCertificacion;
 
-    private final RFC PACCertificador;
+    @AttributeOverrides({
+        @AttributeOverride(name = "rfc",
+                column = @Column(name = "rfcPACCertificador")),
+        @AttributeOverride(name = "razonSocial",
+                column = @Column(name = "razonSocialPACCertificador"))
+    })
+    private final EmpresaFiscal PACCertificador;
 
+    @Column(precision = 11, scale = 2)
     private final BigDecimal total;
 
+    @Enumerated(EnumType.STRING)
     private final Tipo tipo;
 
+    @Enumerated(EnumType.STRING)
     private final Status status;
 
     CFDIMeta(CFDIMetaBuilder builder) {
@@ -72,11 +108,11 @@ public class CFDIMeta implements Comparable<CFDIMeta>{
         return folio;
     }
 
-    public RFC getEmisor() {
+    public EmpresaFiscal getEmisor() {
         return emisor;
     }
 
-    public RFC getReceptor() {
+    public EmpresaFiscal getReceptor() {
         return receptor;
     }
 
@@ -88,7 +124,7 @@ public class CFDIMeta implements Comparable<CFDIMeta>{
         return fechaCertificacion;
     }
 
-    public RFC getPACCertificador() {
+    public EmpresaFiscal getPACCertificador() {
         return PACCertificador;
     }
 

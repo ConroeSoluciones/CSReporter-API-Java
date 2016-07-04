@@ -6,7 +6,7 @@ package com.csfacturacion.csreporter;
 import com.csfacturacion.csreporter.CFDIMeta;
 import com.csfacturacion.csreporter.CFDIMeta.Status;
 import com.csfacturacion.csreporter.CFDIMeta.Tipo;
-import com.csfacturacion.csreporter.RFC;
+import com.csfacturacion.csreporter.EmpresaFiscal;
 import com.csfacturacion.csreporter.impl.ConsultaImpl;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -20,15 +20,15 @@ public class CFDIMetaBuilder {
 
     private UUID folio;
 
-    private RFC emisor;
+    private EmpresaFiscal emisor;
 
-    private RFC receptor;
+    private EmpresaFiscal receptor;
 
     private Date fechaEmision = new Date();
 
     private Date fechaCertificacion;
 
-    private RFC PACCertificador;
+    private EmpresaFiscal PACCertificador;
 
     private BigDecimal total;
 
@@ -51,12 +51,12 @@ public class CFDIMetaBuilder {
         return this;
     }
 
-    public CFDIMetaBuilder emisor(RFC emisor) {
+    public CFDIMetaBuilder emisor(EmpresaFiscal emisor) {
         this.emisor = emisor;
         return this;
     }
 
-    public CFDIMetaBuilder receptor(RFC receptor) {
+    public CFDIMetaBuilder receptor(EmpresaFiscal receptor) {
         this.receptor = receptor;
         return this;
     }
@@ -71,7 +71,7 @@ public class CFDIMetaBuilder {
         return this;
     }
 
-    public CFDIMetaBuilder PACCertificador(RFC certificador) {
+    public CFDIMetaBuilder PACCertificador(EmpresaFiscal certificador) {
         this.PACCertificador = certificador;
         return this;
     }
@@ -95,11 +95,11 @@ public class CFDIMetaBuilder {
         return folio;
     }
 
-    public RFC getEmisor() {
+    public EmpresaFiscal getEmisor() {
         return emisor;
     }
 
-    public RFC getReceptor() {
+    public EmpresaFiscal getReceptor() {
         return receptor;
     }
 
@@ -111,7 +111,7 @@ public class CFDIMetaBuilder {
         return fechaCertificacion;
     }
 
-    public RFC getPACCertificador() {
+    public EmpresaFiscal getPACCertificador() {
         return PACCertificador;
     }
 
