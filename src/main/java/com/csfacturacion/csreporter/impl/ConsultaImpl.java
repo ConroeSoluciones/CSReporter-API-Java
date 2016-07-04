@@ -6,6 +6,7 @@ package com.csfacturacion.csreporter.impl;
 import com.csfacturacion.csreporter.impl.http.UserAgent;
 import com.csfacturacion.csreporter.CFDIMeta;
 import com.csfacturacion.csreporter.Consulta;
+import com.csfacturacion.csreporter.ResultadosInsuficientesException;
 import com.csfacturacion.csreporter.impl.util.RequestFactory;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonObject;
@@ -117,8 +118,15 @@ public class ConsultaImpl implements Consulta {
     }
 
     @Override
-    public List<CFDIMeta> getResultados(int pagina) {
+    public List<CFDIMeta> getResultados(int pagina)
+            throws ResultadosInsuficientesException {
+        
         validarTerminada();
+
+        if (getPaginas() <= 0) {
+            throw new ResultadosInsuficientesException("No existen suficientes "
+                    + "resultados para mostrar, total páginas: " + getPaginas());
+        }
 
         List<CFDIMeta> resultados = userAgent.open(
                 requestFactory.newResultadosRequest(folio, pagina))
