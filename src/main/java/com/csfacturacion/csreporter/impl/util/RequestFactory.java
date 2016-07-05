@@ -155,7 +155,8 @@ public class RequestFactory {
             return new Request(
                     newDescargaURIBuilder(folio, folioCFDI)
                     .build(),
-                    Request.HttpMethod.GET);
+                    Request.HttpMethod.GET)
+                    .setAcceptMediaType(Request.MediaType.TEXT_XML);
         } catch (URISyntaxException e) {
             // log
             throw new RuntimeException();

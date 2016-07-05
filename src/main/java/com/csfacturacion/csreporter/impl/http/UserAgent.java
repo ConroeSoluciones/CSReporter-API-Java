@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -67,6 +68,12 @@ public class UserAgent {
 
             }
             r = p;
+        }
+
+        if (request.getAcceptMediaType() != null) {
+            r.setHeader(
+                    HttpHeaders.ACCEPT,
+                    request.getAcceptMediaType().getName());
         }
 
         RawResponse rawResponse = openRaw(r);

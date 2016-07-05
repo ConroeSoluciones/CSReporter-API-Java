@@ -18,8 +18,20 @@ public class Request {
     }
 
     public enum MediaType {
-        X_WWW_FORM_URLENCODED,
-        JSON
+        X_WWW_FORM_URLENCODED("x-www-form-urlencoded"),
+        JSON("application/json"), 
+        TEXT_XML("text/xml");
+
+        private String name;
+
+        MediaType(String nombre) {
+            this.name = nombre;
+        }
+
+        public String getName() {
+            return name;
+        }
+
     }
     
     private URI uri;
@@ -30,6 +42,8 @@ public class Request {
 
     private MediaType mediaType = MediaType.X_WWW_FORM_URLENCODED;
 
+    private MediaType acceptMediaType;
+
     public Request(URI uri, HttpMethod method) {
         this(uri, method, null);
     }
@@ -38,6 +52,15 @@ public class Request {
         this.uri = uri;
         this.method = method;
         this.entity = entity;
+    }
+
+    public MediaType getAcceptMediaType() {
+        return acceptMediaType;
+    }
+
+    public Request setAcceptMediaType(MediaType acceptMediaType) {
+        this.acceptMediaType = acceptMediaType;
+        return this;
     }
 
     public MediaType getMediaType() {
