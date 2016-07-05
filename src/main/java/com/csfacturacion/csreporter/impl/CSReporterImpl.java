@@ -6,6 +6,7 @@ package com.csfacturacion.csreporter.impl;
 import com.csfacturacion.csreporter.impl.http.UserAgent;
 import com.csfacturacion.csreporter.CloseableCSReporter;
 import com.csfacturacion.csreporter.Consulta;
+import com.csfacturacion.csreporter.ConsultaInexistenteException;
 import com.csfacturacion.csreporter.ConsultaInvalidaException;
 import com.csfacturacion.csreporter.Credenciales;
 import com.csfacturacion.csreporter.Parametros;
@@ -216,8 +217,8 @@ public class CSReporterImpl implements CloseableCSReporter {
         // verifica que la respuesta sea la esperada, de lo contrario
         // no existe una consulta asociada con el folio dado
         if (response.getCode() != 200) {
-            throw new ConsultaInvalidaException("No existe ninguna consulta con"
-                    + " el UUID dado.");
+            throw new ConsultaInexistenteException("No existe ninguna consulta "
+                    + "con el UUID dado.");
         }
 
     }
