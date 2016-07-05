@@ -3,7 +3,6 @@
  */
 package com.csfacturacion.csreporter.impl;
 
-import com.csfacturacion.csreporter.CFDIMeta;
 import com.csfacturacion.csreporter.impl.http.UserAgent;
 import com.csfacturacion.csreporter.CloseableCSReporter;
 import com.csfacturacion.csreporter.Consulta;

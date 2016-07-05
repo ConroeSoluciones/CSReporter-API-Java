@@ -18,7 +18,7 @@ import java.util.UUID;
  *
  * @author emerino
  */
-public class ConsultaImpl<T extends CFDIMeta> implements Consulta {
+public class ConsultaImpl implements Consulta {
 
     private static final String csHost = "www.csfacturacion.com";
 
@@ -118,7 +118,7 @@ public class ConsultaImpl<T extends CFDIMeta> implements Consulta {
     }
 
     @Override
-    public List<CFDIMeta> getResultados(int pagina)
+    public List<? extends CFDIMeta> getResultados(int pagina)
             throws ResultadosInsuficientesException {
 
         validarTerminada();

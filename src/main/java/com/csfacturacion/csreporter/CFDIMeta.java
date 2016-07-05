@@ -51,7 +51,7 @@ public class CFDIMeta implements Comparable<CFDIMeta>{
     }
 
     @Column(length = 36, nullable = false, unique = true)
-    private UUID folio;
+    private String folio;
 
     @AttributeOverrides({
         @AttributeOverride(name = "rfc", column = @Column(name = "rfcEmisor")),
@@ -95,8 +95,8 @@ public class CFDIMeta implements Comparable<CFDIMeta>{
     protected CFDIMeta() {
     }
 
-    CFDIMeta(CFDIMetaBuilder builder) {
-        this.folio = builder.getFolio();
+    protected CFDIMeta(CFDIMetaBuilder builder) {
+        this.folio = builder.getFolio().toString();
         this.emisor = builder.getEmisor();
         this.receptor = builder.getReceptor();
         this.fechaEmision = builder.getFechaEmision();
@@ -108,7 +108,7 @@ public class CFDIMeta implements Comparable<CFDIMeta>{
     }
 
     public UUID getFolio() {
-        return folio;
+        return UUID.fromString(folio);
     }
 
     public EmpresaFiscal getEmisor() {
