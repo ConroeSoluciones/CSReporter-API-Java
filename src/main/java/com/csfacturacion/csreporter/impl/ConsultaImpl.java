@@ -118,15 +118,15 @@ public class ConsultaImpl implements Consulta {
     }
 
     @Override
-    public List<? extends CFDIMeta> getResultados(int pagina)
+    public <T extends CFDIMeta> List<T> getResultados(int pagina)
             throws ResultadosInsuficientesException {
 
         validarTerminada();
         validarResultadosSuficientes(pagina);
 
-        List<CFDIMeta> resultados = userAgent.open(
+        List<T> resultados = userAgent.open(
                 requestFactory.newResultadosRequest(folio, pagina))
-                .getAs(new TypeToken<List<CFDIMeta>>() {
+                .getAs(new TypeToken<List<T>>() {
                 });
 
         return resultados;
