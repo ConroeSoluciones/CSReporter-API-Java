@@ -132,8 +132,13 @@ public class ConsultaImpl implements Consulta {
         return resultados;
     }
 
+    @Override
+    public boolean hasResultados() {
+        return getPaginas() > 0;
+    }
+
     protected void validarResultadosSuficientes(int pagina) {
-        if (getPaginas() <= 0 || pagina > getPaginas()) {
+        if (!hasResultados() || pagina > getPaginas()) {
             throw new ResultadosInsuficientesException("No existen suficientes "
                     + "resultados para mostrar, total páginas: " + getPaginas());
         }

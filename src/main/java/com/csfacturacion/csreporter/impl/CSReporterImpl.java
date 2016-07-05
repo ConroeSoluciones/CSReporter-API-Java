@@ -131,12 +131,21 @@ public class CSReporterImpl implements CloseableCSReporter {
         Request request = requestFactory.newConsultaRequest(
                 csCredenciales, credenciales, params);
 
-        JsonObject consultaJson = userAgent.open(request)
+        Response response = userAgent.open(request);
+        JsonObject consultaJson = response
                 .getAsJson()
                 .getAsJsonObject();
 
         String folioRaw = consultaJson.get(getJsonConsultaIdParamName())
                 .getAsString();
+
+        if (response.getCode() != 200) {
+            throw new ConsultaInvalidaException("Ocurrió un error al "
+                    + "comunicarse con el servidor de descarga masiva."
+                    + "Código del servidor: " 
+                    + response.getCode());
+        }
+        
         if (folioRaw.isEmpty()) {
             // TODO: Debería mandar al log la estructura JSON recibida,
             // para arreglar el problema en caso que se presente.

@@ -116,6 +116,12 @@ public interface Consulta {
             throws ResultadosInsuficientesException;
 
     /**
+     * Determina si hay resultados disponibles para esta consulta.
+     * @return true si hay resultados disponibles, false de otro modo.
+     */
+    boolean hasResultados();
+
+    /**
      * Un CFDIMeta se puede buscar directamente por folio si es un resultado de esta
  consulta. 
      *
