@@ -5,9 +5,6 @@ package com.csfacturacion.csreporter;
 
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Lob;
 
 /**
  * Facilita la validación y manejo general de una empresa fiscal
@@ -15,16 +12,12 @@ import javax.persistence.Lob;
  *
  * @author emerino
  */
-@Embeddable
 public class EmpresaFiscal implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(nullable = false)
     private String rfc;
 
-    @Lob
-    @Column(nullable = true)
     private String razonSocial;
 
     protected EmpresaFiscal() {
