@@ -209,7 +209,8 @@ public class CSReporterIT {
                             // cada lista contiene hasta 20 cfdis, estos NO
                             // se almacenan en memoria, son descartados tan 
                             // pronto como deje de usarse la lista devuelta
-                            List<CFDIMeta> resultados = c.getResultados(i);
+                            List<? extends CFDIMeta> resultados 
+                                    = c.getResultados(i);
 
                             for (CFDIMeta cfdi : resultados) {
                                 // trabajar con el CFDIMeta
