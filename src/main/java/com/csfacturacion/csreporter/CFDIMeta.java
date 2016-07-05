@@ -51,7 +51,7 @@ public class CFDIMeta implements Comparable<CFDIMeta>{
     }
 
     @Column(length = 36, nullable = false, unique = true)
-    private final UUID folio;
+    private UUID folio;
 
     @AttributeOverrides({
         @AttributeOverride(name = "rfc", column = @Column(name = "rfcEmisor")),
@@ -59,7 +59,7 @@ public class CFDIMeta implements Comparable<CFDIMeta>{
                 column = @Column(name = "razonSocialEmisor"))
     })
     @Embedded
-    private final EmpresaFiscal emisor;
+    private EmpresaFiscal emisor;
 
     @AttributeOverrides({
         @AttributeOverride(name = "rfc", column = @Column(name = "rfcReceptor")),
@@ -67,13 +67,13 @@ public class CFDIMeta implements Comparable<CFDIMeta>{
                 column = @Column(name = "razonSocialReceptor"))
     })
     @Embedded
-    private final EmpresaFiscal receptor;
+    private EmpresaFiscal receptor;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private final Date fechaEmision;
+    private Date fechaEmision;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private final Date fechaCertificacion;
+    private Date fechaCertificacion;
 
     @AttributeOverrides({
         @AttributeOverride(name = "rfc",
@@ -81,16 +81,19 @@ public class CFDIMeta implements Comparable<CFDIMeta>{
         @AttributeOverride(name = "razonSocial",
                 column = @Column(name = "razonSocialPACCertificador"))
     })
-    private final EmpresaFiscal PACCertificador;
+    private EmpresaFiscal PACCertificador;
 
     @Column(precision = 11, scale = 2)
-    private final BigDecimal total;
+    private BigDecimal total;
 
     @Enumerated(EnumType.STRING)
-    private final Tipo tipo;
+    private Tipo tipo;
 
     @Enumerated(EnumType.STRING)
-    private final Status status;
+    private Status status;
+
+    protected CFDIMeta() {
+    }
 
     CFDIMeta(CFDIMetaBuilder builder) {
         this.folio = builder.getFolio();

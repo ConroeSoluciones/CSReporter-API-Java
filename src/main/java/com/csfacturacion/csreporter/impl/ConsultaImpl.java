@@ -18,7 +18,7 @@ import java.util.UUID;
  *
  * @author emerino
  */
-public class ConsultaImpl implements Consulta {
+public class ConsultaImpl<T extends CFDIMeta> implements Consulta {
 
     private static final String csHost = "www.csfacturacion.com";
 
@@ -35,7 +35,7 @@ public class ConsultaImpl implements Consulta {
 
     private RequestFactory requestFactory;
 
-    ConsultaImpl(UUID folio,
+    protected ConsultaImpl(UUID folio,
             RequestFactory requestFactory,
             UserAgent userAgent) {
 
@@ -120,13 +120,9 @@ public class ConsultaImpl implements Consulta {
     @Override
     public List<CFDIMeta> getResultados(int pagina)
             throws ResultadosInsuficientesException {
-        
-        validarTerminada();
 
-        if (getPaginas() <= 0 || pagina > getPaginas()) {
-            throw new ResultadosInsuficientesException("No existen suficientes "
-                    + "resultados para mostrar, total páginas: " + getPaginas());
-        }
+        validarTerminada();
+        validarResultadosSuficientes(pagina);
 
         List<CFDIMeta> resultados = userAgent.open(
                 requestFactory.newResultadosRequest(folio, pagina))
@@ -134,6 +130,22 @@ public class ConsultaImpl implements Consulta {
                 });
 
         return resultados;
+    }
+
+    protected void validarResultadosSuficientes(int pagina) {
+        if (getPaginas() <= 0 || pagina > getPaginas()) {
+            throw new ResultadosInsuficientesException("No existen suficientes "
+                    + "resultados para mostrar, total páginas: " + getPaginas());
+        }
+
+    }
+
+    protected UserAgent getUserAgent() {
+        return userAgent;
+    }
+
+    protected RequestFactory getRequestFactory() {
+        return requestFactory;
     }
 
     @Override
@@ -154,7 +166,7 @@ public class ConsultaImpl implements Consulta {
                 .getRawResponse();
     }
 
-    private void validarTerminada() {
+    protected void validarTerminada() {
         if (!isTerminada()) {
             throw new IllegalStateException("La consulta no ha terminado.");
         }

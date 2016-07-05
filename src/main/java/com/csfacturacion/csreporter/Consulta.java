@@ -112,7 +112,7 @@ public interface Consulta {
      * @return El total de registros encontrados en la página dada o un arreglo
      * vacío si no hay suficientes resultados.
      */
-    List<CFDIMeta> getResultados(int pagina) 
+    List<? extends CFDIMeta> getResultados(int pagina) 
             throws ResultadosInsuficientesException;
 
     /**

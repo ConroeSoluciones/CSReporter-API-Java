@@ -3,6 +3,7 @@
  */
 package com.csfacturacion.csreporter.impl;
 
+import com.csfacturacion.csreporter.CFDIMeta;
 import com.csfacturacion.csreporter.impl.http.UserAgent;
 import com.csfacturacion.csreporter.CloseableCSReporter;
 import com.csfacturacion.csreporter.Consulta;
@@ -158,7 +159,8 @@ public class CSReporterImpl implements CloseableCSReporter {
             ProgresoConsultaListener listener)
             throws ConsultaInvalidaException {
 
-        Consulta consulta = new ConsultaImpl(folio, requestFactory, userAgent);
+        Consulta consulta 
+                = new ConsultaImpl(folio, requestFactory, userAgent);
         if (listener != null) {
             statusChecker.addConsulta(consulta, listener);
         }
@@ -251,11 +253,23 @@ public class CSReporterImpl implements CloseableCSReporter {
         return statusCheckTimeout;
     }
 
+    protected StatusChecker getStatusChecker() {
+        return statusChecker;
+    }
+
+    protected UserAgent getUserAgent() {
+        return userAgent;
+    }
+
+    protected RequestFactory getRequestFactory() {
+        return requestFactory;
+    }
+
     /**
      * Las instancias de esta clase se encargan de checar el estado actual de
      * una o varias consultas, cada N segundos.
      */
-    private static class StatusChecker implements Runnable {
+    protected static class StatusChecker implements Runnable {
 
         private final Deque<ConsultaHolder> consultas = Queues.newArrayDeque();
 
