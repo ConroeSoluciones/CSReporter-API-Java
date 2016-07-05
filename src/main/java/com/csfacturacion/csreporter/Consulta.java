@@ -75,7 +75,7 @@ public interface Consulta {
      * Si la consulta ha sido marcada con status REPETIR, no habrá ningún
      * resultado disponible y será necesario repetir esta consulta.
      *
-     * @see DescargaSAT#repetir()
+     * @see CSReporter#repetir(java.util.UUID) 
      * @return true si el status es REPETIR, false de otro modo.
      */
     boolean isRepetir();

@@ -28,7 +28,7 @@ public class Response {
 
     /**
      * Convierte la respuesta a una estructura JSON.
-     * @return 
+     * @return la estructura en formato Json (JsonElement)
      */
     public JsonElement getAsJson() {
         return jsonParser.parse(rawResponse);
@@ -36,9 +36,9 @@ public class Response {
 
     /**
      * Convierte la respuesta de acuerdo al TypeToken dado.
-     * @param <T>
-     * @param token
-     * @return 
+     * @param <T> El tipo de los datos que serán convertidos.
+     * @param token El typetoken que contiene el tipo a usar.
+     * @return el objeto convertido al tipo provisto.
      */
     public <T> T getAs(TypeToken<T> token) {
         T object = gson.fromJson(rawResponse, token.getType());

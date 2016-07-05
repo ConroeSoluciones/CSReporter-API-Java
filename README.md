@@ -5,11 +5,45 @@ de nuestro Web Service para CSReporter.
 
 Consta de 2 interfaces principales:
 
-    com.csfacturacion.CSReporter
-    com.csfacturacion.Consulta
+    com.csfacturacion.csreporter.CSReporter
+    com.csfacturacion.csreporter.Consulta
 
 Las implementaciones de ambas interfaces se encargan de realizar las peticiones
 HTTP a la API REST del WS, presentando una API sencilla para clientes finales.
+
+# Dependencias
+
+* Java SE 5+
+* [Apache Maven](http://maven.apache.org/)
+
+# Construcción
+
+Ejecutar el siguiente comando para instalar la API en el repositorio
+local de maven:
+
+    mvn install
+
+# Uso
+
+Una vez instalada con el comando anterior, incluir la dependencia al POM del
+proyecto donde se quiera utilizar:
+
+    <dependency>
+        <groupId>com.csfacturacion.csreporter</groupId>
+        <artifactId>csreporter-api-java</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+# Documentación
+
+Para generar la documentación del proyecto, ejecutar el siguiente comando:
+
+    mvn site
+
+Esto generará la documentación en la carpeta "target/site", comenzar a navegar
+por el archivo index.html.
+
+# Ejemplos de uso
 
 Algunos ejemplos de uso:
 
