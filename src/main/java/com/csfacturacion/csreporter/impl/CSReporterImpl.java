@@ -48,7 +48,7 @@ public class CSReporterImpl implements CloseableCSReporter {
     private final UserAgent userAgent;
 
     private final ScheduledExecutorService scheduler
-            = Executors.newScheduledThreadPool(1);
+            = Executors.newSingleThreadScheduledExecutor();
 
     private ScheduledFuture<?> statusCheckerHandle;
 
