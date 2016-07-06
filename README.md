@@ -16,23 +16,24 @@ HTTP a la API REST del WS, presentando una API sencilla para clientes finales.
 * Java SE 5+
 * [Apache Maven](http://maven.apache.org/)
 
-# Construcción
-
-Ejecutar el siguiente comando para instalar la API en el repositorio
-local de maven:
-
-    mvn install
-
 # Uso
 
-Una vez instalada con el comando anterior, incluir la dependencia al POM del
-proyecto donde se quiera utilizar:
+La API se encuentra en el repositorio central de Maven, por lo que sólo se 
+debe incluir la dependencia en el POM del proyecto donde se quiera utilizar.
 
     <dependency>
         <groupId>com.csfacturacion.csreporter</groupId>
         <artifactId>csreporter-api-java</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1</version>
     </dependency>
+
+# Construcción e instalación del proyecto
+
+Ejecutar el siguiente comando para construir e instalar la API en el repositorio
+local de maven:
+
+    mvn install
+
 
 # Documentación
 

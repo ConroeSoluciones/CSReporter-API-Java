@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.csfacturacion.csreporter</groupId>
     <artifactId>csreporter-api-java</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>jar</packaging>
     <description>
         Provee una API cliente en Java para el servicio de CSReporter de
@@ -28,7 +28,6 @@
         <connection>scm:git:git@github.com:ConroeSoluciones/CSReporter-API-Java.git</connection>
         <developerConnection>scm:git:git@github.com:ConroeSoluciones/CSReporter-API-Java.git</developerConnection>
         <url>https://github.com/ConroeSoluciones/CSReporter-API-Java</url>
-        <tag>HEAD</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>
@@ -38,6 +37,7 @@
     </distributionManagement>
     <profiles>
         <profile>
+            <id>release</id>
             <build>
                 <plugins>
                     <plugin>
