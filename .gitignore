@@ -3,3 +3,5 @@
 satCredenciales.json
 csCredenciales.json
 config.json
+*.releaseBackup
+release.properties

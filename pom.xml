@@ -33,7 +33,8 @@
         <connection>scm:git:git@github.com:ConroeSoluciones/CSReporter-API-Java.git</connection>
         <developerConnection>scm:git:git@github.com:ConroeSoluciones/CSReporter-API-Java.git</developerConnection>
         <url>https://github.com/ConroeSoluciones/CSReporter-API-Java</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
     <build>
         <pluginManagement>
             <plugins>
