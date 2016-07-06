@@ -112,7 +112,24 @@ public interface Consulta {
      * @return El total de registros encontrados en la página dada o un arreglo
      * vacío si no hay suficientes resultados.
      */
-    <T extends CFDIMeta> List<T> getResultados(int pagina) 
+    List<CFDIMeta> getResultados(int pagina) 
+            throws ResultadosInsuficientesException;
+
+    /**
+     * Este método sirve cuando se quiere obtener los resultados en objetos
+     * que no sean CFDIMeta sino una extensión de éste. Esto es útil en casos
+     * donde se requiere persistir el CFDIMeta, en lugar de tener que copiar
+     * manualmente cada CFDIMeta a otro objeto, se obtienes los resultados
+     * directamente con la clase esperada.
+     *
+     * @param pagina que se desea obtener.
+     * @param clazz la clase a la que se convertirán los resultados.
+     * @return El total de registros encontrados en la página dada o un arreglo
+     * vacío si no hay suficientes resultados.
+     */
+    <T extends CFDIMeta> List<T> getResultados(
+            int pagina, 
+            Class<T> clazz) 
             throws ResultadosInsuficientesException;
 
     /**

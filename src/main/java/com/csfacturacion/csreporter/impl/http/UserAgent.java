@@ -127,6 +127,10 @@ public class UserAgent {
         httpClient.close();
     }
 
+    public Gson getGson() {
+        return gson;
+    }
+
     private static class RawResponse {
 
         private String content;

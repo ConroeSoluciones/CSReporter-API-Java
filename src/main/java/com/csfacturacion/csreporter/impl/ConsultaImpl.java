@@ -7,9 +7,12 @@ import com.csfacturacion.csreporter.impl.http.UserAgent;
 import com.csfacturacion.csreporter.CFDIMeta;
 import com.csfacturacion.csreporter.Consulta;
 import com.csfacturacion.csreporter.ResultadosInsuficientesException;
+import com.csfacturacion.csreporter.impl.http.Response;
 import com.csfacturacion.csreporter.impl.util.RequestFactory;
-import com.google.common.reflect.TypeToken;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -118,18 +121,39 @@ public class ConsultaImpl implements Consulta {
     }
 
     @Override
-    public <T extends CFDIMeta> List<T> getResultados(int pagina)
+    public List<CFDIMeta> getResultados(int pagina)
             throws ResultadosInsuficientesException {
+
+        return getResultados(pagina, CFDIMeta.class);
+    }
+
+    @Override
+    public <T extends CFDIMeta> List<T> getResultados(
+            int pagina, Class<T> clazz) {
 
         validarTerminada();
         validarResultadosSuficientes(pagina);
 
-        List<T> resultados = userAgent.open(
-                requestFactory.newResultadosRequest(folio, pagina))
-                .getAs(new TypeToken<List<T>>() {
-                });
+        List<T> resultados = newResultadosList(userAgent.open(
+                requestFactory.newResultadosRequest(folio, pagina)),
+                clazz);
 
         return resultados;
+    }
+
+    protected <T extends CFDIMeta> List<T> newResultadosList(
+            Response response,
+            Class<T> clazz) {
+        
+        JsonArray array = response.getAsJson().getAsJsonArray();
+
+        List<T> lst = new ArrayList<T>();
+        for (final JsonElement json : array) {
+            T entity = userAgent.getGson().fromJson(json, clazz);
+            lst.add(entity);
+        }
+
+        return lst;
     }
 
     @Override

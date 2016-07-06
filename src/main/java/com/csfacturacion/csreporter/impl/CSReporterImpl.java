@@ -143,10 +143,10 @@ public class CSReporterImpl implements CloseableCSReporter {
         if (response.getCode() != 200) {
             throw new ConsultaInvalidaException("Ocurrió un error al "
                     + "comunicarse con el servidor de descarga masiva."
-                    + "Código del servidor: " 
+                    + "Código del servidor: "
                     + response.getCode());
         }
-        
+
         if (folioRaw.isEmpty()) {
             // TODO: Debería mandar al log la estructura JSON recibida,
             // para arreglar el problema en caso que se presente.
@@ -157,22 +157,30 @@ public class CSReporterImpl implements CloseableCSReporter {
             throw new ConsultaInvalidaException(msg);
         }
 
-        return newConsulta(UUID.fromString(folioRaw), listener);
+        return newConsultaWithChecker(UUID.fromString(folioRaw), listener);
     }
 
     protected String getJsonConsultaIdParamName() {
         return "UUID";
     }
 
-    protected Consulta newConsulta(UUID folio,
+    protected Consulta newConsulta(UUID folio)
+            throws ConsultaInvalidaException {
+
+        return new ConsultaImpl(folio, requestFactory, userAgent);
+    }
+
+    private Consulta newConsultaWithChecker(
+            UUID folio,
             ProgresoConsultaListener listener)
             throws ConsultaInvalidaException {
 
-        Consulta consulta 
-                = new ConsultaImpl(folio, requestFactory, userAgent);
+        Consulta consulta = newConsulta(folio);
+        
         if (listener != null) {
             statusChecker.addConsulta(consulta, listener);
         }
+
         return consulta;
     }
 
@@ -180,7 +188,7 @@ public class CSReporterImpl implements CloseableCSReporter {
     public Consulta buscar(UUID folio) throws ConsultaInvalidaException {
         validarExistente(folio);
 
-        return newConsulta(folio, null);
+        return newConsultaWithChecker(folio, null);
     }
 
     @Override
@@ -235,7 +243,7 @@ public class CSReporterImpl implements CloseableCSReporter {
         validarExistente(folio);
         userAgent.open(requestFactory.newRepetirConsultaRequest(folio));
 
-        return newConsulta(folio, listener);
+        return newConsultaWithChecker(folio, listener);
     }
 
     /**
