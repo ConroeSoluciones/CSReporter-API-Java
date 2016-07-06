@@ -153,8 +153,9 @@ public interface Consulta {
      * no haber un XML asociado, en estos casos devuelve null.
      * @param folio del CFDIMeta.
      * @return el XML asociado con el CFDIMeta o null si no hay ninguno.
+     * @throws XMLNoEncontradoException si no se encuentra el XML solicitado.
      */
-    String getCFDIXML(UUID folio);
+    String getCFDIXML(UUID folio) throws XMLNoEncontradoException;
 
     /**
      * Devuelve el XML del CFDIMeta dado. En ocasiones puede no haber un XML 
@@ -162,6 +163,7 @@ public interface Consulta {
      * 
      * @param cfdi del CFDIMeta.
      * @return el XML asociado con el CFDIMeta o null si no hay ninguno.
+     * @throws XMLNoEncontradoException si no se encuentra el XML solicitado.
      */
-    String getCFDIXML(CFDIMeta cfdi);
+    String getCFDIXML(CFDIMeta cfdi) throws XMLNoEncontradoException;
 }

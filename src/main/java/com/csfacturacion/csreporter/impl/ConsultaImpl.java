@@ -7,6 +7,7 @@ import com.csfacturacion.csreporter.impl.http.UserAgent;
 import com.csfacturacion.csreporter.CFDIMeta;
 import com.csfacturacion.csreporter.Consulta;
 import com.csfacturacion.csreporter.ResultadosInsuficientesException;
+import com.csfacturacion.csreporter.XMLNoEncontradoException;
 import com.csfacturacion.csreporter.impl.http.Response;
 import com.csfacturacion.csreporter.impl.util.RequestFactory;
 import com.google.gson.JsonArray;
@@ -144,7 +145,7 @@ public class ConsultaImpl implements Consulta {
     protected <T extends CFDIMeta> List<T> newResultadosList(
             Response response,
             Class<T> clazz) {
-        
+
         JsonArray array = response.getAsJson().getAsJsonArray();
 
         List<T> lst = new ArrayList<T>();
@@ -183,16 +184,22 @@ public class ConsultaImpl implements Consulta {
     }
 
     @Override
-    public String getCFDIXML(CFDIMeta cfdi) {
+    public String getCFDIXML(CFDIMeta cfdi) throws XMLNoEncontradoException {
         return getCFDIXML(cfdi.getFolio());
     }
 
     @Override
-    public String getCFDIXML(UUID folioCFDI) {
+    public String getCFDIXML(UUID folioCFDI) throws XMLNoEncontradoException {
         validarTerminada();
-        return userAgent.open(
-                requestFactory.newDescargaRequest(folio, folioCFDI))
-                .getRawResponse();
+        Response response = getUserAgent().open(
+                getRequestFactory().newDescargaRequest(folio, folioCFDI));
+
+        if (response.getCode() != 200) {
+            throw new XMLNoEncontradoException("No se encontró el XML para el "
+                    + "folio: " + folioCFDI);
+        }
+
+        return response.getRawResponse();
     }
 
     protected void validarTerminada() {

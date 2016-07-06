@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.csfacturacion.csreporter</groupId>
     <artifactId>csreporter-api-java</artifactId>
-    <version>0.1</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>
         Provee una API cliente en Java para el servicio de CSReporter de
