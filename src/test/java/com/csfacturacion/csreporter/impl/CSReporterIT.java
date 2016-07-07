@@ -10,6 +10,7 @@ import com.csfacturacion.csreporter.Credenciales;
 import com.csfacturacion.csreporter.Parametros;
 import com.csfacturacion.csreporter.ParametrosBuilder;
 import com.csfacturacion.csreporter.ProgresoConsultaListener;
+import com.csfacturacion.csreporter.XMLNoEncontradoException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -25,6 +26,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Realiza pruebas de integración con el webservice de descargas.
@@ -44,6 +47,9 @@ import org.junit.Ignore;
  * @author emerino
  */
 public class CSReporterIT {
+
+    private static final Logger LOGGER
+            = LoggerFactory.getLogger(CSReporterIT.class);
 
     private static CSReporterImpl descargaSAT;
 
@@ -116,14 +122,14 @@ public class CSReporterIT {
                 parametros,
                 new ProgresoConsultaListener() {
 
-                    @Override
-                    public void onStatusChanged(Consulta consulta) {
-                        // todo lo que hay en este método se ejecuta en un 
-                        // Thread distinto, cada vez que hay un cambio de estado
-                        // en la consulta.
-                        CSReporterIT.this.onStatusChanged(consulta);
-                    }
-                });
+            @Override
+            public void onStatusChanged(Consulta consulta) {
+                // todo lo que hay en este método se ejecuta en un 
+                // Thread distinto, cada vez que hay un cambio de estado
+                // en la consulta.
+                CSReporterIT.this.onStatusChanged(consulta);
+            }
+        });
 
         esperarConsulta(consulta);
     }
@@ -156,12 +162,12 @@ public class CSReporterIT {
         Consulta consulta = descargaSAT.buscar(consultaFolio,
                 new ProgresoConsultaListener() {
 
-                    @Override
-                    public void onStatusChanged(Consulta c) {
-                        System.out.println(c.getStatus());
-                        CSReporterIT.this.onStatusChanged(c);
-                    }
-                });
+            @Override
+            public void onStatusChanged(Consulta c) {
+                System.out.println(c.getStatus());
+                CSReporterIT.this.onStatusChanged(c);
+            }
+        });
 
         esperarConsulta(consulta);
 
@@ -180,11 +186,11 @@ public class CSReporterIT {
         Consulta consulta = descargaSAT.repetir(consultaFolio,
                 new ProgresoConsultaListener() {
 
-                    @Override
-                    public void onStatusChanged(Consulta status) {
-                        CSReporterIT.this.onStatusChanged(status);
-                    }
-                });
+            @Override
+            public void onStatusChanged(Consulta status) {
+                CSReporterIT.this.onStatusChanged(status);
+            }
+        });
 
         esperarConsulta(consulta);
     }
@@ -199,26 +205,26 @@ public class CSReporterIT {
         descargaSAT.buscar(consultaFolio,
                 new ConsultaTerminadaListener() {
 
-                    @Override
-                    public void onTerminada(Consulta c) {
-                        assertTrue(!c.isFallo());
-                        assertTrue(c.getTotalResultados() > 0);
-                        assertTrue(c.getPaginas() > 0);
+            @Override
+            public void onTerminada(Consulta c) {
+                assertTrue(!c.isFallo());
+                assertTrue(c.getTotalResultados() > 0);
+                assertTrue(c.getPaginas() > 0);
 
-                        for (int i = 1; i <= c.getPaginas(); i++) {
-                            // cada lista contiene hasta 20 cfdis, estos NO
-                            // se almacenan en memoria, son descartados tan 
-                            // pronto como deje de usarse la lista devuelta
-                            List<? extends CFDIMeta> resultados 
-                                    = c.getResultados(i);
+                for (int i = 1; i <= c.getPaginas(); i++) {
+                    // cada lista contiene hasta 20 cfdis, estos NO
+                    // se almacenan en memoria, son descartados tan 
+                    // pronto como deje de usarse la lista devuelta
+                    List<? extends CFDIMeta> resultados
+                            = c.getResultados(i);
 
-                            for (CFDIMeta cfdi : resultados) {
-                                // trabajar con el CFDIMeta
-                                assertTrue(cfdi.getFolio() != null);
-                            }
-                        }
+                    for (CFDIMeta cfdi : resultados) {
+                        // trabajar con el CFDIMeta
+                        assertTrue(cfdi.getFolio() != null);
                     }
-                });
+                }
+            }
+        });
     }
 
     @Test
@@ -232,14 +238,19 @@ public class CSReporterIT {
         descargaSAT.buscar(consultaFolio,
                 new ConsultaTerminadaListener() {
 
-                    @Override
-                    public void onTerminada(Consulta consulta) {
-                        String xml = consulta.getCFDIXML(cfdiFolio);
+            @Override
+            public void onTerminada(Consulta consulta) {
+                try {
 
-                        assertTrue(xml != null);
-                        //assertEquals(cfdiXml, xml.trim());
-                    }
-                });
+                    String xml = consulta.getCFDIXML(cfdiFolio);
+
+                    assertTrue(xml != null);
+                } catch (XMLNoEncontradoException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+                //assertEquals(cfdiXml, xml.trim());
+            }
+        });
     }
 
     private void onStatusChanged(Consulta consulta) {
