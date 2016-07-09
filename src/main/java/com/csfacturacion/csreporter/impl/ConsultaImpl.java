@@ -29,15 +29,13 @@ public class ConsultaImpl implements Consulta {
     private final UserAgent userAgent;
     private final UUID folio;
 
-    private int paginas;
+    private Integer paginas;
 
-    private long totalResultados;
-
-    private boolean initResultados;
-
-    private boolean initPaginas;
+    private Long totalResultados;
 
     private RequestFactory requestFactory;
+
+    private Status status;
 
     protected ConsultaImpl(UUID folio,
             RequestFactory requestFactory,
@@ -53,30 +51,32 @@ public class ConsultaImpl implements Consulta {
      */
     @Override
     public Status getStatus() {
-        JsonObject progreso = userAgent.open(
-                requestFactory.newStatusRequest(folio))
-                .getAsJson()
-                .getAsJsonObject();
+        Status statusNuevo = status;
+        
+        if (statusNuevo == null) {
+            JsonObject progreso = userAgent.open(
+                    requestFactory.newStatusRequest(folio))
+                    .getAsJson()
+                    .getAsJsonObject();
 
-        Status status = Status.valueOf(progreso.get("estado").getAsString());
+            statusNuevo = Status.valueOf(progreso.get("estado").getAsString());
 
-        return status;
+            if (statusNuevo.isCompletado()) {
+                status = statusNuevo;
+            }
+        }
+
+        return statusNuevo;
     }
 
     @Override
     public boolean isTerminada() {
-        Status status = getStatus();
-        return status.toString().startsWith("COMPLETADO")
-                || isFallo(status);
+        return getStatus().isCompletado();
     }
 
     @Override
     public boolean isFallo() {
-        return isFallo(getStatus());
-    }
-
-    private boolean isFallo(Status status) {
-        return status.toString().startsWith("FALLO");
+        return getStatus().isFallo();
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ConsultaImpl implements Consulta {
 
     @Override
     public long getTotalResultados() {
-        if (!initResultados) {
+        if (totalResultados == null) {
             validarTerminada();
             JsonObject resumen = userAgent.open(
                     requestFactory.newResumenRequest(folio))
@@ -99,7 +99,6 @@ public class ConsultaImpl implements Consulta {
                     .getAsJsonObject();
 
             totalResultados = Long.valueOf(resumen.get("total").toString());
-            initResultados = true;
         }
 
         return totalResultados;
@@ -107,7 +106,7 @@ public class ConsultaImpl implements Consulta {
 
     @Override
     public int getPaginas() {
-        if (!initPaginas) {
+        if (paginas == null) {
             validarTerminada();
             JsonObject resumen = userAgent.open(
                     requestFactory.newResumenRequest(folio))
@@ -115,7 +114,6 @@ public class ConsultaImpl implements Consulta {
                     .getAsJsonObject();
 
             paginas = Integer.valueOf(resumen.get("paginas").toString());
-            initPaginas = true;
         }
 
         return paginas;

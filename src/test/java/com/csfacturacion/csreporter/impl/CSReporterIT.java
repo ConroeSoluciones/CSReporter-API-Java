@@ -5,6 +5,7 @@ package com.csfacturacion.csreporter.impl;
 
 import com.csfacturacion.csreporter.CFDIMeta;
 import com.csfacturacion.csreporter.Consulta;
+import com.csfacturacion.csreporter.Consulta.Status;
 import com.csfacturacion.csreporter.ConsultaInvalidaException;
 import com.csfacturacion.csreporter.Credenciales;
 import com.csfacturacion.csreporter.Parametros;
@@ -123,7 +124,7 @@ public class CSReporterIT {
                 new ProgresoConsultaListener() {
 
             @Override
-            public void onStatusChanged(Consulta consulta) {
+            public void onStatusChanged(Status status, Consulta consulta) {
                 // todo lo que hay en este método se ejecuta en un 
                 // Thread distinto, cada vez que hay un cambio de estado
                 // en la consulta.
@@ -163,8 +164,8 @@ public class CSReporterIT {
                 new ProgresoConsultaListener() {
 
             @Override
-            public void onStatusChanged(Consulta c) {
-                System.out.println(c.getStatus());
+            public void onStatusChanged(Status status, Consulta c) {
+                System.out.println(status);
                 CSReporterIT.this.onStatusChanged(c);
             }
         });
@@ -187,8 +188,8 @@ public class CSReporterIT {
                 new ProgresoConsultaListener() {
 
             @Override
-            public void onStatusChanged(Consulta status) {
-                CSReporterIT.this.onStatusChanged(status);
+            public void onStatusChanged(Status status, Consulta consulta) {
+                CSReporterIT.this.onStatusChanged(consulta);
             }
         });
 
@@ -281,8 +282,8 @@ public class CSReporterIT {
             implements ProgresoConsultaListener {
 
         @Override
-        public final void onStatusChanged(Consulta consulta) {
-            if (consulta.isTerminada()) {
+        public final void onStatusChanged(Status status, Consulta consulta) {
+            if (status.isCompletado()) {
                 onTerminada(consulta);
             }
         }

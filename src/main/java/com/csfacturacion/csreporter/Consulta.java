@@ -28,7 +28,17 @@ public interface Consulta {
         FALLO,
         COMPLETADO,
         COMPLETADO_CON_FALTANTES,
-        REPETIR
+        REPETIR;
+
+        public boolean isCompletado() {
+            return this.name().startsWith("COMPLETADO")
+                    || isFallo();
+        }
+
+        public boolean isFallo() {
+            return this.name().startsWith("FALLO");
+        }
+
     }
 
     /**
@@ -75,7 +85,7 @@ public interface Consulta {
      * Si la consulta ha sido marcada con status REPETIR, no habrá ningún
      * resultado disponible y será necesario repetir esta consulta.
      *
-     * @see CSReporter#repetir(java.util.UUID) 
+     * @see CSReporter#repetir(java.util.UUID)
      * @return true si el status es REPETIR, false de otro modo.
      */
     boolean isRepetir();
@@ -112,13 +122,13 @@ public interface Consulta {
      * @return El total de registros encontrados en la página dada o un arreglo
      * vacío si no hay suficientes resultados.
      */
-    List<CFDIMeta> getResultados(int pagina) 
+    List<CFDIMeta> getResultados(int pagina)
             throws ResultadosInsuficientesException;
 
     /**
-     * Este método sirve cuando se quiere obtener los resultados en objetos
-     * que no sean CFDIMeta sino una extensión de éste. Esto es útil en casos
-     * donde se requiere persistir el CFDIMeta, en lugar de tener que copiar
+     * Este método sirve cuando se quiere obtener los resultados en objetos que
+     * no sean CFDIMeta sino una extensión de éste. Esto es útil en casos donde
+     * se requiere persistir el CFDIMeta, en lugar de tener que copiar
      * manualmente cada CFDIMeta a otro objeto, se obtienes los resultados
      * directamente con la clase esperada.
      *
@@ -128,29 +138,31 @@ public interface Consulta {
      * vacío si no hay suficientes resultados.
      */
     <T extends CFDIMeta> List<T> getResultados(
-            int pagina, 
-            Class<T> clazz) 
+            int pagina,
+            Class<T> clazz)
             throws ResultadosInsuficientesException;
 
     /**
      * Determina si hay resultados disponibles para esta consulta.
+     *
      * @return true si hay resultados disponibles, false de otro modo.
      */
     boolean hasResultados();
 
     /**
-     * Un CFDIMeta se puede buscar directamente por folio si es un resultado de esta
- consulta. 
+     * Un CFDIMeta se puede buscar directamente por folio si es un resultado de
+     * esta consulta.
      *
      * @param folio del CFDIMeta
      * @return el CFDIMeta correspondiente o null si no se encontró en esta
- consulta.
+     * consulta.
      */
     CFDIMeta getCFDI(UUID folio);
 
     /**
-     * Devuelve el XML del CFDIMeta asociado con el folio dado. En ocasiones puede
-     * no haber un XML asociado, en estos casos devuelve null.
+     * Devuelve el XML del CFDIMeta asociado con el folio dado. En ocasiones
+     * puede no haber un XML asociado, en estos casos devuelve null.
+     *
      * @param folio del CFDIMeta.
      * @return el XML asociado con el CFDIMeta o null si no hay ninguno.
      * @throws XMLNoEncontradoException si no se encuentra el XML solicitado.
@@ -158,9 +170,9 @@ public interface Consulta {
     String getCFDIXML(UUID folio) throws XMLNoEncontradoException;
 
     /**
-     * Devuelve el XML del CFDIMeta dado. En ocasiones puede no haber un XML 
-     * asociado, en estos casos devuelve null. 
-     * 
+     * Devuelve el XML del CFDIMeta dado. En ocasiones puede no haber un XML
+     * asociado, en estos casos devuelve null.
+     *
      * @param cfdi del CFDIMeta.
      * @return el XML asociado con el CFDIMeta o null si no hay ninguno.
      * @throws XMLNoEncontradoException si no se encuentra el XML solicitado.

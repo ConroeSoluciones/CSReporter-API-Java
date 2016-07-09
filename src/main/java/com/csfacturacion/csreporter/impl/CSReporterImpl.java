@@ -6,6 +6,7 @@ package com.csfacturacion.csreporter.impl;
 import com.csfacturacion.csreporter.impl.http.UserAgent;
 import com.csfacturacion.csreporter.CloseableCSReporter;
 import com.csfacturacion.csreporter.Consulta;
+import com.csfacturacion.csreporter.Consulta.Status;
 import com.csfacturacion.csreporter.ConsultaInexistenteException;
 import com.csfacturacion.csreporter.ConsultaInvalidaException;
 import com.csfacturacion.csreporter.Credenciales;
@@ -15,11 +16,9 @@ import com.csfacturacion.csreporter.impl.http.Request;
 import com.csfacturacion.csreporter.impl.http.Response;
 import com.csfacturacion.csreporter.impl.util.RequestFactory;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Queues;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import java.io.IOException;
-import java.util.Deque;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
@@ -164,19 +163,19 @@ public class CSReporterImpl implements CloseableCSReporter {
         return "UUID";
     }
 
-    protected Consulta newConsulta(UUID folio)
+    protected ConsultaImpl newConsulta(UUID folio)
             throws ConsultaInvalidaException {
 
         return new ConsultaImpl(folio, requestFactory, userAgent);
     }
 
-    private Consulta newConsultaWithChecker(
+    private ConsultaImpl newConsultaWithChecker(
             UUID folio,
             ProgresoConsultaListener listener)
             throws ConsultaInvalidaException {
 
-        Consulta consulta = newConsulta(folio);
-        
+        ConsultaImpl consulta = newConsulta(folio);
+
         if (listener != null) {
             statusChecker.addConsulta(consulta, listener);
         }
@@ -185,32 +184,33 @@ public class CSReporterImpl implements CloseableCSReporter {
     }
 
     @Override
-    public Consulta buscar(UUID folio) throws ConsultaInvalidaException {
+    public ConsultaImpl buscar(UUID folio) throws ConsultaInvalidaException {
         validarExistente(folio);
 
         return newConsultaWithChecker(folio, null);
     }
 
     @Override
-    public Consulta buscar(UUID folio, ProgresoConsultaListener listener)
+    public ConsultaImpl buscar(UUID folio, ProgresoConsultaListener listener)
             throws ConsultaInvalidaException {
 
         if (listener == null) {
             throw new IllegalArgumentException("listener == null");
         }
 
-        Consulta consulta = buscar(folio);
-        if (consulta.isRepetir()) {
+        ConsultaImpl consulta = buscar(folio);
+        Status status = consulta.getStatus();
+        if (status == Status.REPETIR) {
             // repetir de ser necesario
             consulta = repetir(folio, listener);
-        } else if (!consulta.isTerminada()) {
+        } else if (!status.isCompletado()) {
             // si aún no ha terminado, agrega la consulta para ser verificada
             // con el status checker
             statusChecker.addConsulta(consulta, listener);
         } else {
             // si ya había terminado, simplemente llama al método onStatusChanged
             // directamente
-            listener.onStatusChanged(consulta);
+            listener.onStatusChanged(status, consulta);
         }
 
         return consulta;
@@ -232,12 +232,12 @@ public class CSReporterImpl implements CloseableCSReporter {
     }
 
     @Override
-    public Consulta repetir(UUID folio) throws ConsultaInvalidaException {
+    public ConsultaImpl repetir(UUID folio) throws ConsultaInvalidaException {
         return repetir(folio, null);
     }
 
     @Override
-    public Consulta repetir(UUID folio, ProgresoConsultaListener listener)
+    public ConsultaImpl repetir(UUID folio, ProgresoConsultaListener listener)
             throws ConsultaInvalidaException {
 
         validarExistente(folio);
@@ -288,7 +288,7 @@ public class CSReporterImpl implements CloseableCSReporter {
      */
     protected static class StatusChecker implements Runnable {
 
-        private final Deque<ConsultaHolder> consultas = Queues.newArrayDeque();
+        private final List<ConsultaHolder> consultas = Lists.newArrayList();
 
         private final ReentrantLock consultasLock;
 
@@ -296,7 +296,7 @@ public class CSReporterImpl implements CloseableCSReporter {
             this.consultasLock = new ReentrantLock();
         }
 
-        public void addConsulta(Consulta consulta,
+        public void addConsulta(ConsultaImpl consulta,
                 ProgresoConsultaListener progresoListener) {
 
             consultasLock.lock();
@@ -318,16 +318,20 @@ public class CSReporterImpl implements CloseableCSReporter {
                     Consulta.Status status = holder.consulta.getStatus();
                     // notifica de ser necesario
                     if (holder.progresoListener != null
-                            && (status != holder.statusAnterior
-                            || status == Consulta.Status.COMPLETADO)) {
+                            && status != holder.statusAnterior) {
+
+                        holder.statusAnterior = status;
+
+                        if (status.isCompletado()) {
+                            terminadas.add(holder);
+                        }
 
                         holder.progresoListener.onStatusChanged(
+                                status,
                                 holder.consulta);
+
                     }
 
-                    if (holder.consulta.isTerminada()) {
-                        terminadas.add(holder);
-                    }
                 }
 
                 for (ConsultaHolder terminada : terminadas) {
@@ -341,11 +345,11 @@ public class CSReporterImpl implements CloseableCSReporter {
 
     private static class ConsultaHolder {
 
-        private final Consulta consulta;
+        private final ConsultaImpl consulta;
         private final ProgresoConsultaListener progresoListener;
         private Consulta.Status statusAnterior;
 
-        public ConsultaHolder(Consulta consulta,
+        public ConsultaHolder(ConsultaImpl consulta,
                 ProgresoConsultaListener progresoListener) {
 
             this.consulta = consulta;
