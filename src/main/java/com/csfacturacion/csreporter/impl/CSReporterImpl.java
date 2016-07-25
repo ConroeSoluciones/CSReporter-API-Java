@@ -27,6 +27,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementación por defecto de DescargaSAT. Se utiliza un DescargaSAT por
@@ -36,6 +38,9 @@ import org.apache.http.impl.client.HttpClients;
  * @author emerino
  */
 public class CSReporterImpl implements CloseableCSReporter {
+
+    private static final Logger LOGGER
+            = LoggerFactory.getLogger(CSReporterImpl.class);
 
     private static final int DEFAULT_TIMEOUT = 15; //seconds
 
@@ -315,21 +320,39 @@ public class CSReporterImpl implements CloseableCSReporter {
 
             try {
                 for (ConsultaHolder holder : consultas) {
-                    Consulta.Status status = holder.consulta.getStatus();
-                    // notifica de ser necesario
-                    if (holder.progresoListener != null
-                            && status != holder.statusAnterior) {
+                    Consulta.Status status;
 
-                        holder.statusAnterior = status;
+                    try {
+                        status = holder.consulta.getStatus();
+                        
+                        // notifica de ser necesario
+                        if (holder.progresoListener != null
+                                && status != holder.statusAnterior) {
 
-                        if (status.isCompletado()) {
-                            terminadas.add(holder);
+                            holder.statusAnterior = status;
+
+                            if (status.isCompletado()) {
+                                terminadas.add(holder);
+                            }
+
+                            holder.progresoListener.onStatusChanged(
+                                    status,
+                                    holder.consulta);
+
                         }
 
-                        holder.progresoListener.onStatusChanged(
-                                status,
-                                holder.consulta);
+                    } catch (Exception e) {
+                        // actualmente si no se puede comunicar con el servidor,
+                        // la instancia de UserAgent utilizada falla, lo que
+                        // causa que el Thread actual termine
+                        // TODO: Se necesita una excepción más específica,
+                        // y probablemente verificada
+                        LOGGER.debug("Hubo un problema al intentar conectarse "
+                                + "al servidor de cfdis descarga", e);
 
+                        // también da por terminada la consulta
+                        // TODO: Notificar
+                        terminadas.add(holder);
                     }
 
                 }
