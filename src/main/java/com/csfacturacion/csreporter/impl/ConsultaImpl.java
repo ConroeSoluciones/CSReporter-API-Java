@@ -6,6 +6,7 @@ package com.csfacturacion.csreporter.impl;
 import com.csfacturacion.csreporter.impl.http.UserAgent;
 import com.csfacturacion.csreporter.CFDIMeta;
 import com.csfacturacion.csreporter.Consulta;
+import com.csfacturacion.csreporter.Parametros;
 import com.csfacturacion.csreporter.ResultadosInsuficientesException;
 import com.csfacturacion.csreporter.XMLNoEncontradoException;
 import com.csfacturacion.csreporter.impl.http.Response;
@@ -15,6 +16,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -37,13 +39,23 @@ public class ConsultaImpl implements Consulta {
 
     private Status status;
 
-    protected ConsultaImpl(UUID folio,
+    private Parametros parametros;
+
+    protected ConsultaImpl(
+            Parametros parametros,
+            UUID folio,
             RequestFactory requestFactory,
             UserAgent userAgent) {
 
         this.folio = folio;
         this.userAgent = userAgent;
         this.requestFactory = requestFactory;
+        this.parametros = parametros;
+    }
+
+    @Override
+    public Parametros getParametros() {
+        return parametros;
     }
 
     /**
@@ -204,6 +216,31 @@ public class ConsultaImpl implements Consulta {
         if (!isTerminada()) {
             throw new IllegalStateException("La consulta no ha terminado.");
         }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.folio);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ConsultaImpl other = (ConsultaImpl) obj;
+        if (!Objects.equals(this.folio, other.folio)) {
+            return false;
+        }
+        return true;
     }
 
 }

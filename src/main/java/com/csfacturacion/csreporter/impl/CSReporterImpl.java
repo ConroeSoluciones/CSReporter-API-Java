@@ -161,25 +161,29 @@ public class CSReporterImpl implements CloseableCSReporter {
             throw new ConsultaInvalidaException(msg);
         }
 
-        return newConsultaWithChecker(UUID.fromString(folioRaw), listener);
+        return newConsultaWithChecker(
+                params, 
+                UUID.fromString(folioRaw), 
+                listener);
     }
 
     protected String getJsonConsultaIdParamName() {
         return "UUID";
     }
 
-    protected ConsultaImpl newConsulta(UUID folio)
+    protected ConsultaImpl newConsulta(Parametros parametros, UUID folio)
             throws ConsultaInvalidaException {
 
-        return new ConsultaImpl(folio, requestFactory, userAgent);
+        return new ConsultaImpl(parametros, folio, requestFactory, userAgent);
     }
 
     private ConsultaImpl newConsultaWithChecker(
+            Parametros parametros,
             UUID folio,
             ProgresoConsultaListener listener)
             throws ConsultaInvalidaException {
 
-        ConsultaImpl consulta = newConsulta(folio);
+        ConsultaImpl consulta = newConsulta(parametros, folio);
 
         if (listener != null) {
             statusChecker.addConsulta(consulta, listener);
@@ -192,7 +196,10 @@ public class CSReporterImpl implements CloseableCSReporter {
     public ConsultaImpl buscar(UUID folio) throws ConsultaInvalidaException {
         validarExistente(folio);
 
-        return newConsultaWithChecker(folio, null);
+        // TODO: Actualmente, el WS no devuelve los parámetros de búsqueda
+        // utilizados para generar la consulta que se busca, por lo que los
+        // parámetros serán nulos
+        return newConsultaWithChecker(null, folio, null);
     }
 
     @Override
@@ -248,7 +255,7 @@ public class CSReporterImpl implements CloseableCSReporter {
         validarExistente(folio);
         userAgent.open(requestFactory.newRepetirConsultaRequest(folio));
 
-        return newConsultaWithChecker(folio, listener);
+        return newConsultaWithChecker(null, folio, listener);
     }
 
     /**

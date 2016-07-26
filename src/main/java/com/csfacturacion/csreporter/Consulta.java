@@ -42,6 +42,12 @@ public interface Consulta {
     }
 
     /**
+     * Los parámetros utilizados para generar esta Consulta.
+     * @return los parámetros utilizados.
+     */
+    Parametros getParametros();
+
+    /**
      * El status actual de la consulta, reportado por el WS. EN_ESPERA: No han
      * comenzado a descargarse los CFDIs, se encuentra en cola la petición.
      * EN_PROCESO: La descarga de CFDIs está en curso. DESCARGANDO: Ya se tiene
