@@ -95,7 +95,7 @@ public class CFDIMeta implements Comparable<CFDIMeta>{
     protected CFDIMeta() {
     }
 
-    protected CFDIMeta(CFDIMetaBuilder builder) {
+    protected CFDIMeta(CFDIMetaBuilder<?, ?> builder) {
         this.folio = builder.getFolio().toString();
         this.emisor = builder.getEmisor();
         this.receptor = builder.getReceptor();

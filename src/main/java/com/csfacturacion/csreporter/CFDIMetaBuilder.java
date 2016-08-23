@@ -3,10 +3,8 @@
  */
 package com.csfacturacion.csreporter;
 
-import com.csfacturacion.csreporter.CFDIMeta;
 import com.csfacturacion.csreporter.CFDIMeta.Status;
 import com.csfacturacion.csreporter.CFDIMeta.Tipo;
-import com.csfacturacion.csreporter.EmpresaFiscal;
 import com.csfacturacion.csreporter.impl.ConsultaImpl;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -16,7 +14,8 @@ import java.util.UUID;
  *
  * @author emerino
  */
-public class CFDIMetaBuilder {
+public abstract class CFDIMetaBuilder<
+        C extends CFDIMeta, B extends CFDIMetaBuilder<C, B>> {
 
     private UUID folio;
 
@@ -36,59 +35,55 @@ public class CFDIMetaBuilder {
 
     private Status status;
 
-    private final ConsultaImpl consulta;
+    protected abstract B thisBuilder();
 
-    public CFDIMetaBuilder(ConsultaImpl consulta) {
-        this.consulta = consulta;
-    }
-
-    public CFDIMetaBuilder folio(String folio) {
+    public B folio(String folio) {
         return folio(UUID.fromString(folio.trim()));
     }
 
-    public CFDIMetaBuilder folio(UUID folio) {
+    public B folio(UUID folio) {
         this.folio = folio;
-        return this;
+        return thisBuilder();
     }
 
-    public CFDIMetaBuilder emisor(EmpresaFiscal emisor) {
+    public B emisor(EmpresaFiscal emisor) {
         this.emisor = emisor;
-        return this;
+        return thisBuilder();
     }
 
-    public CFDIMetaBuilder receptor(EmpresaFiscal receptor) {
+    public B receptor(EmpresaFiscal receptor) {
         this.receptor = receptor;
-        return this;
+        return thisBuilder();
     }
 
-    public CFDIMetaBuilder fechaEmision(Date fechaEmision) {
+    public B fechaEmision(Date fechaEmision) {
         this.fechaEmision = fechaEmision;
-        return this;
+        return thisBuilder();
     }
 
-    public CFDIMetaBuilder fechaCertificacion(Date fechaCertificacion) {
+    public B fechaCertificacion(Date fechaCertificacion) {
         this.fechaCertificacion = fechaCertificacion;
-        return this;
+        return thisBuilder();
     }
 
-    public CFDIMetaBuilder PACCertificador(EmpresaFiscal certificador) {
+    public B PACCertificador(EmpresaFiscal certificador) {
         this.PACCertificador = certificador;
-        return this;
+        return thisBuilder();
     }
 
-    public CFDIMetaBuilder total(BigDecimal total) {
+    public B total(BigDecimal total) {
         this.total = total;
-        return this;
+        return thisBuilder();
     }
 
-    public CFDIMetaBuilder tipo(Tipo tipo) {
+    public B tipo(Tipo tipo) {
         this.tipo = tipo;
-        return this;
+        return thisBuilder();
     }
 
-    public CFDIMetaBuilder status(Status status) {
+    public B status(Status status) {
         this.status = status;
-        return this;
+        return thisBuilder();
     }
 
     public UUID getFolio() {
@@ -127,14 +122,5 @@ public class CFDIMetaBuilder {
         return status;
     }
 
-    public ConsultaImpl getConsulta() {
-        return consulta;
-    }
-
-    public CFDIMeta build() {
-            // TODO: Validate
-        // se debe devolver una copia, para evitar que se pueda modificar
-        // el CFDIMeta a través del builder después de ser creado.
-        return new CFDIMeta(this);
-    }
+    public abstract C build();
 }
