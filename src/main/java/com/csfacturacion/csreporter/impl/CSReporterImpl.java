@@ -80,6 +80,10 @@ public class CSReporterImpl implements CloseableCSReporter {
                 timeout);
     }
 
+    public CSReporterImpl(RequestFactory requestFactory, UserAgent userAgent) {
+        this(requestFactory, userAgent, DEFAULT_TIMEOUT * 1000);
+    }
+
     public CSReporterImpl(RequestFactory requestFactory,
             UserAgent userAgent,
             int timeout) {

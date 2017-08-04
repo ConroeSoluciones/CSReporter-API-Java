@@ -38,7 +38,9 @@ public class CFDIMeta implements Comparable<CFDIMeta>{
 
         INGRESO,
         EGRESO,
-        TRASLADO
+        TRASLADO,
+        PAGO,
+        NOMINA
     }
 
     /**

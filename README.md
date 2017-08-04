@@ -24,7 +24,7 @@ debe incluir la dependencia en el POM del proyecto donde se quiera utilizar.
     <dependency>
         <groupId>com.csfacturacion.csreporter</groupId>
         <artifactId>csreporter-api-java</artifactId>
-        <version>0.6</version>
+        <version>1.0</version>
     </dependency>
 
 # Construcción e instalación del proyecto
