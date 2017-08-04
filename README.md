@@ -16,7 +16,7 @@ HTTP a la API REST del WS, presentando una API sencilla para clientes finales.
 * Java SE 5+
 * [Apache Maven](http://maven.apache.org/)
 
-# Uso
+# Instalación
 
 La API se encuentra en el repositorio central de Maven, por lo que sólo se 
 debe incluir la dependencia en el POM del proyecto donde se quiera utilizar.
