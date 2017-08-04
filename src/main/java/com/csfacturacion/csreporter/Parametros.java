@@ -25,6 +25,23 @@ public class Parametros {
         RECIBIDAS
     }
 
+    /**
+     * Para las consultas de comprobantes recibidos, es necesario permitir
+     * especificar el tipo de búsqueda que se quiere realizar, ya que en
+     * ocasiones, el portal del SAT devuelve resultados erróneos si se busca en
+     * rangos de tiempo que contienen muchos CFDIs (más de 500), en esos casos
+     * es necesario acotar los rangos de búsqueda. Sin embargo, si se realiza
+     * esta acción para todas las consultas, estas tardaran mucho más tiempo del
+     * actual, siendo innecesario en la mayoría de los casos.
+     *
+     * @author emerino
+     */
+    public enum ModoBusqueda {
+
+        NORMAL, // busca por día
+        EXHAUSTIVA // busca por hora
+    }
+
     public enum Servicio {
 
         CSREPORTER(8),
@@ -52,6 +69,8 @@ public class Parametros {
 
     private final Tipo tipo;
 
+    private final ModoBusqueda modoBusqueda;
+
     private final Servicio servicio;
 
     Parametros(ParametrosBuilder builder) {
@@ -61,6 +80,11 @@ public class Parametros {
         this.status = builder.getStatus();
         this.tipo = builder.getTipo();
         this.servicio = builder.getServicio();
+        this.modoBusqueda = builder.getModoBusqueda();
+    }
+
+    public ModoBusqueda getModoBusqueda() {
+        return modoBusqueda;
     }
 
     public String getRfcBusqueda() {

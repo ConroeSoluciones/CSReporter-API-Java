@@ -3,6 +3,7 @@
  */
 package com.csfacturacion.csreporter;
 
+import com.csfacturacion.csreporter.Parametros.ModoBusqueda;
 import com.csfacturacion.csreporter.Parametros.Servicio;
 import com.csfacturacion.csreporter.Parametros.Status;
 import com.csfacturacion.csreporter.Parametros.Tipo;
@@ -27,6 +28,17 @@ public class ParametrosBuilder {
     private Tipo tipo;
 
     private Servicio servicio = Servicio.CSREPORTER;
+
+    private ModoBusqueda modoBusqueda = ModoBusqueda.NORMAL;
+
+    public ModoBusqueda getModoBusqueda() {
+        return modoBusqueda;
+    }
+
+    public ParametrosBuilder modoBusqueda(ModoBusqueda modoBusqueda) {
+        this.modoBusqueda = modoBusqueda;
+        return this;
+    }
 
     /**
      * El Servicio a utilizar en la consulta, por defecto CSREPORTER.
