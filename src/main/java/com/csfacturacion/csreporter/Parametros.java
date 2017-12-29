@@ -22,7 +22,8 @@ public class Parametros {
     public enum Tipo {
 
         EMITIDAS,
-        RECIBIDAS
+        RECIBIDAS,
+        TODAS
     }
 
     /**
@@ -78,7 +79,9 @@ public class Parametros {
         this.fechaInicio = builder.getFechaInicio();
         this.fechaFin = builder.getFechaFin();
         this.status = builder.getStatus();
-        this.tipo = builder.getTipo();
+        this.tipo = (builder.getTipo() != null)
+                ? builder.getTipo()
+                : Tipo.TODAS;
         this.servicio = builder.getServicio();
         this.modoBusqueda = builder.getModoBusqueda();
     }

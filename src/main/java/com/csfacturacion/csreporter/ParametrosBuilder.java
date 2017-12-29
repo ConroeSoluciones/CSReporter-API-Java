@@ -109,10 +109,6 @@ public class ParametrosBuilder {
     }
 
     public Parametros build() {
-        if (this.tipo == null) {
-            throw new IllegalStateException("Se debe definir un tipo para la consulta");
-        }
-
         if (new DateTime(fechaInicio).withTimeAtStartOfDay().compareTo(
                 new DateTime(fechaFin).withTimeAtStartOfDay()) > 0) {
 
