@@ -43,7 +43,7 @@ public class RequestFactory {
     }
 
     protected URIBuilder newBaseURIBuilder() {
-        return newBaseURIBuilder(wsPath);
+        return newBaseURIBuilder("");
     }
 
     protected URIBuilder newBaseURIBuilder(String path) {
