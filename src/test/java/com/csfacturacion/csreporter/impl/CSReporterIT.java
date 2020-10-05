@@ -98,6 +98,7 @@ public class CSReporterIT {
         parametros = new ParametrosBuilder()
                 .tipo(Parametros.Tipo.EMITIDAS)
                 .status(Parametros.Status.TODOS)
+                .servicio(Parametros.Servicio.CSDESCARGASAT)
                 .fechaInicio(new DateTime()
                         .withDate(2015, 1, 1)
                         .withTimeAtStartOfDay()

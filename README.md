@@ -8,7 +8,7 @@ Consta de 2 interfaces principales:
     com.csfacturacion.csreporter.CSReporter
     com.csfacturacion.csreporter.Consulta
 
-Las implementaciones de ambas interfaces se encargan de realizar las peticiones
+Las implementacCambiando el número 11 a 14 del CSDESCARGASATiones de ambas interfaces se encargan de realizar las peticiones
 HTTP a la API REST del WS, presentando una API sencilla para clientes finales.
 
 # Dependencias
@@ -63,6 +63,7 @@ Algunos ejemplos de uso:
             new ParametrosBuilder()
             .tipo(Parametros.Tipo.EMITIDAS)
             .status(Parametros.Status.TODOS)
+            .servicio(Parametros.Servicio.CSDESCARGASAT)
             .fechaInicio(new DateTime()
                     .withDate(2014, 1, 1)
                     .withTimeAtStartOfDay()
