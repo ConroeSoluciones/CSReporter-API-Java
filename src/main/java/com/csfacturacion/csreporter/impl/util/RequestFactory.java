@@ -60,7 +60,7 @@ public class RequestFactory {
         try {
             DateTimeFormatter df = getDateFormatter();
             URIBuilder consultaUriBuilder = newBaseURIBuilder()
-                    .setParameter("method", "ConsultaSat")
+                    .setParameter("method", "ObtenerCfdisV2")
                     .setParameter("cRfcContrato", csCredenciales.getUsuario())
                     .setParameter("cRfc", satCredenciales.getUsuario())
                     .setParameter("cPassword", satCredenciales.getPassword())
