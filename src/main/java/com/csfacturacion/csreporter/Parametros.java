@@ -46,7 +46,7 @@ public class Parametros {
     public enum Servicio {
 
         CSREPORTER(8),
-        CSDESCARGASAT(11);
+        CSDESCARGASAT(14);
 
         private final int numero;
 
