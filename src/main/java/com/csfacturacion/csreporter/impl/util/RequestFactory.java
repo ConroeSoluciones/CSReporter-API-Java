@@ -62,6 +62,7 @@ public class RequestFactory {
             URIBuilder consultaUriBuilder = newBaseURIBuilder()
                     .setParameter("method", "ObtenerCfdisV2")
                     .setParameter("cRfcContrato", csCredenciales.getUsuario())
+                    .setParameter("cpassContrato", csCredenciales.getPassword())
                     .setParameter("cRfc", satCredenciales.getUsuario())
                     .setParameter("cPassword", satCredenciales.getPassword())
                     .setParameter("cFchI",
