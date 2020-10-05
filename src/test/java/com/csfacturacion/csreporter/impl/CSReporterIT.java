@@ -115,7 +115,6 @@ public class CSReporterIT {
     }
 
     @Test
-    @Ignore
     public void consultarAsync() throws Exception {
         // este método termina al obtener el UUID de la consulta realizada,
         // recibe el listener (callback) como parámetro, el cuál será ejecutado
