@@ -57,6 +57,21 @@ public class RequestFactory {
             Credenciales satCredenciales,
             Parametros params) {
 
+        String tipo;
+
+        switch (params.getTipo()) {
+
+            case EMITIDAS:
+                tipo = "emitidas";
+                break;
+            case RECIBIDAS:
+                tipo = "recibidas";
+                break;
+            default:
+                tipo = "todos";
+                break;
+        }
+        
         try {
             DateTimeFormatter df = getDateFormatter();
             URIBuilder consultaUriBuilder = newBaseURIBuilder()
@@ -69,10 +84,7 @@ public class RequestFactory {
                             df.print(params.getFechaInicio().getTime()))
                     .setParameter("cFchF",
                             df.print(params.getFechaFin().getTime()))
-                    .setParameter("cConsulta",
-                            (params.getTipo() == Parametros.Tipo.EMITIDAS)
-                                    ? "emitidas"
-                                    : "recibidas")
+                    .setParameter("cConsulta", tipo)
                     .setParameter("cRfcSearch",
                             (params.getRfcBusqueda() != null)
                                     ? params.getRfcBusqueda().toString()
