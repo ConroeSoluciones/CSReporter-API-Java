@@ -28,6 +28,8 @@ public interface Consulta {
         FALLO,
         COMPLETADO,
         COMPLETADO_CON_FALTANTES,
+        COMPLETADO_XML_FALTANTES,
+        COMPLETADO_CON_FALTANTES_XMLS_NO_DISPONIBLES,
         REPETIR;
 
         public boolean isCompletado() {
