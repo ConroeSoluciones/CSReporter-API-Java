@@ -11,12 +11,16 @@ Consta de 2 interfaces principales:
 Las implementacCambiando el número 11 a 14 del CSDESCARGASATiones de ambas interfaces se encargan de realizar las peticiones
 HTTP a la API REST del WS, presentando una API sencilla para clientes finales.
 
-# Dependencias
+## Proyecto Obsoleto
+**Este proyecto ya no recibe actualizaciones y dejará de funcionar el 08/10/2024** . Este repositorio será sustituido por `ConroeSoluciones\descarga-ciec-java-sdk`
+a partir del `30/09/2024`.
+
+## Dependencias
 
 * Java SE 5+
 * [Apache Maven](http://maven.apache.org/)
 
-# Instalación
+## Instalación
 
 La API se encuentra en el repositorio central de Maven, por lo que sólo se 
 debe incluir la dependencia en el POM del proyecto donde se quiera utilizar.
@@ -27,7 +31,7 @@ debe incluir la dependencia en el POM del proyecto donde se quiera utilizar.
         <version>1.1.1</version>
     </dependency>
 
-# Construcción e instalación del proyecto
+## Construcción e instalación del proyecto
 
 Ejecutar el siguiente comando para construir e instalar la API en el repositorio
 local de maven:
@@ -35,7 +39,7 @@ local de maven:
     mvn install
 
 
-# Documentación
+## Documentación
 
 Para generar la documentación del proyecto, ejecutar el siguiente comando:
 
@@ -44,7 +48,7 @@ Para generar la documentación del proyecto, ejecutar el siguiente comando:
 Esto generará la documentación en la carpeta "target/site", comenzar a navegar
 por el archivo index.html.
 
-# Ejemplos de uso
+## Ejemplos de uso
 
 Algunos ejemplos de uso:
 
